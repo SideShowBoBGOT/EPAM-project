@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Employees
+{% endblock %}
+{% block body %}
+<div class="container">
+        <header class="d-flex justify-content-center py-3">
+          <ul class="nav nav-pills">
+            <li class="nav-item"><a href="/" class="nav-link"  aria-current="page">Home</a></li>
+            <li class="nav-item"><a href="/departments" class="nav-link">Departments</a></li>
+            <li class="nav-item"><a href="/employees" class="nav-link active">Employees</a></li>
+          </ul>
+        </header>
+      </div>
+ <div class="container mt-5">
+        <h1>Add employee</h1>
+      <form method="post" class="row g-3 needs-validation" novalidate>
+                <div class="col-md-2">
+                  <label for="validationCustom01" class="form-label">Full name</label>
+                  <input type="text"  name="name" class="form-control" id="validationCustom01" value="John Smith" required>
+                  <div class="valid-feedback">
+                    Looks good!
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <label for="validationCustom04" class="form-label">Department</label>
+                  <select name="department" class="form-select" id="validationCustom04" required>
+                    <option selected disabled value="">Choose department</option>
+                      {% for dnt in departments %}
+                          <option>{{ dnt.department }}</option>
+                      {% endfor %}
+                  </select>
+                  <div class="invalid-feedback">
+                    Please select a valid state.
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <label for="validationCustom05" class="form-label">Salary</label>
+                  <input name="salary" type="text" class="form-control" id="validationCustom05" value="15000" required>
+                  <div class="invalid-feedback">
+                    Please provide a valid salary.
+                  </div>
+                </div>
+
+
+                  <div class="col-md-2">
+                    <label for="validationCustom05" class="form-label">Date of birth</label>
+                    <input name="birth_date" id="validationCustom06" type="date" class="form-control">
+                  </div>
+
+
+              <div class="col-12">
+                <button class="btn btn-primary" type="submit">Add employee</button>
+              </div>
+      </form>
+ </div>
+<div class="container mt-5">
+    <h1>Find an employee by date</h1>
+     <form method="post" class="row g-3 needs-validation" novalidate>
+        <div class="col-md-2">
+                    <label for="validationCustom05" class="form-label">From</label>
+                    <input name="From" id="validationCustom0" type="date" class="form-control">
+        </div>
+         <div class="col-md-2">
+                    <label for="validationCustom05" class="form-label">To</label>
+                    <input name="To" id="validationCustom1" type="date" class="form-control">
+        </div>
+         <div class="col-12">
+                <button class="btn btn-primary" type="submit">Find employee</button>
+              </div>
+     </form>
+</div>
+<div class="container mt-5">
+    <h1>Employees</h1>
+        <table id="data" class="table table-striped">
+            <thead>
+              <tr>
+                <th>Full name</th>
+                  <th>Department</th>
+                  <th>Salary</th>
+                  <th>Date of birth</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for emp in employees %}
+                <tr>
+                  <td>{{ emp.name }}</td>
+                  <td>{{ emp.department }}</td>
+                    <td>{{ emp.salary }}</td>
+                    <td>{{ emp.birth_date }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+  </table>
+    </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script><script type="text/javascript">
+    $('#datepicker').datepicker({
+        weekStart: 1,
+        daysOfWeekHighlighted: "6,0",
+        autoclose: true,
+        todayHighlight: true,
+    });
+    $('#datepicker').datepicker("setDate", new Date());
+</script>
+{% endblock %}

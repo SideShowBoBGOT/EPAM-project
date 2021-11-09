@@ -33,6 +33,7 @@ Departments
               <tr>
                 <th>Department</th>
                   <th>Average salary</th>
+                  <th></th>
               </tr>
             </thead>
             <tbody>
@@ -45,6 +46,10 @@ Departments
                       {% endif %}
                       {% endfor %}
                   </td>
+                    <td>
+                         <a href="/departments/{{ dnt.id }}/del" class="btn btn-danger">Delete</a>
+                        <a href="/departments/{{ dnt.id }}/edit" class="btn btn-success">Edit</a>
+                    </td>
                 </tr>
               {% endfor %}
             </tbody>

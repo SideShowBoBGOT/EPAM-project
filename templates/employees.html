@@ -4,6 +4,7 @@
 Employees
 {% endblock %}
 {% block body %}
+
 <div class="container">
         <header class="d-flex justify-content-center py-3">
           <ul class="nav nav-pills">
@@ -57,7 +58,7 @@ Employees
  </div>
 <div class="container mt-5">
     <h1>Find an employee by date</h1>
-     <form method="post" class="row g-3 needs-validation" novalidate>
+     <form id="find_by_date" method="post" class="row g-3 needs-validation" novalidate>
         <div class="col-md-2">
                     <label for="validationCustom05" class="form-label">From</label>
                     <input name="From" id="validationCustom0" type="date" class="form-control">
@@ -71,29 +72,7 @@ Employees
               </div>
      </form>
 </div>
-<div class="container mt-5">
-    <h1>Employees</h1>
-        <table id="data" class="table table-striped">
-            <thead>
-              <tr>
-                <th>Full name</th>
-                  <th>Department</th>
-                  <th>Salary</th>
-                  <th>Date of birth</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for emp in employees %}
-                <tr>
-                  <td>{{ emp.name }}</td>
-                  <td>{{ emp.department }}</td>
-                    <td>{{ emp.salary }}</td>
-                    <td>{{ emp.birth_date }}</td>
-                </tr>
-              {% endfor %}
-            </tbody>
-  </table>
-    </div>
+{% block table %}{% endblock %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script><script type="text/javascript">
@@ -105,4 +84,21 @@ Employees
     });
     $('#datepicker').datepicker("setDate", new Date());
 </script>
+
+   <script>
+
+        document.addEventListener("DOMContentLoaded", function(event) {
+            var scrollpos = localStorage.getItem('scrollpos');
+            if (scrollpos) {
+                window.scrollTo({behavior: "instant"});
+                window.scrollTo(0, scrollpos);
+            }
+        });
+
+        window.onbeforeunload = function(e) {
+            localStorage.setItem('scrollpos', window.scrollY);
+        };
+    </script>
+
+
 {% endblock %}

@@ -1,0 +1,50 @@
+{% extends 'employees.html' %}
+
+{% block table %}
+<div class="container mt-5">
+    <h1>Employees</h1>
+        <table id="data" class="table table-striped">
+            <thead>
+              <tr>
+                <th>Full name</th>
+                  <th>Department</th>
+                  <th>Salary</th>
+                  <th>Date of birth</th>
+                  <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for emp in employees %}
+              {% if emp.id == id %}
+                <tr>
+                  <td><input type="text"  name="name" class="form-control" id="validationCustom01" value="{{ emp.name }}" required></td>
+                  <td><select name="department" class="form-select" id="validationCustom04" required>
+                    <option selected disabled value="{{ emp.department }}">Choose department</option>
+                      {% for dnt in departments %}
+                          <option>{{ dnt.department }}</option>
+                      {% endfor %}
+                  </select></td>
+                    <td><input name="salary" type="text" class="form-control" id="validationCustom05" value="{{ emp.salary }}" required></td>
+                    <td><input name="birth_date" id="validationCustom06" type="date" class="form-control"></td>
+                    <td>
+                 <a href="/employees" class="btn btn-danger">Cancel</a>
+                <a href="/employees" class="btn btn-success">Change</a>
+              </td>
+                </tr>
+              {% else %}
+                <tr>
+                  <td>{{ emp.name }}</td>
+                  <td>{{ emp.department }}</td>
+                    <td>{{ emp.salary }}</td>
+                    <td>{{ emp.birth_date }}</td>
+                    <td>
+                 <a href="/employees/{{ emp.id }}/del" class="btn btn-danger">Delete</a>
+                <a href="/employees/{{ emp.id }}/edit" class="btn btn-success">Edit</a>
+              </td>
+                </tr>
+                {% endif %}
+              {% endfor %}
+            </tbody>
+        </table>
+</div>
+{% endblock %}

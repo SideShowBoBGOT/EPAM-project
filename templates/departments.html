@@ -39,17 +39,37 @@ Departments
             <tbody>
               {% for dnt in departments %}
                 <tr>
-                  <td>{{ dnt.department }}</td>
+                        {% if dnt.id == id %}
+                     <form method="post" class="row g-3 needs-validation" novalidate>
+                            <td>
+                                <input type="text" name="department" class="form-control" value="{{ dnt.department }}">
+                            </td>
+                            <td>{% for dnt_name in dnt_salary %}
+                              {% if dnt.department == dnt_name %}
+                                {{ dnt_salary[dnt_name] }}
+                              {% endif %}
+                              {% endfor %}
+                          </td>
+                            <td>
+                                <a href="/departments" class="btn btn-danger">Cancel</a>
+                                <button class="btn btn-success" type="submit">Change</button>
+                            </td>
+                     </form>
+                        {% else %}
+                    <td>
+                      {{ dnt.department }}
+                    </td>
                   <td>{% for dnt_name in dnt_salary %}
                       {% if dnt.department == dnt_name %}
                         {{ dnt_salary[dnt_name] }}
                       {% endif %}
                       {% endfor %}
                   </td>
-                    <td>
+                     <td>
                          <a href="/departments/{{ dnt.id }}/del" class="btn btn-danger">Delete</a>
                         <a href="/departments/{{ dnt.id }}/edit" class="btn btn-success">Edit</a>
                     </td>
+                    {% endif %}
                 </tr>
               {% endfor %}
             </tbody>

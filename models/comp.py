@@ -1,4 +1,3 @@
-from flask_sqlalchemy import SQLAlchemy
 try:
     from project.proj import db
 except:

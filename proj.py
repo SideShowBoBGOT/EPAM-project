@@ -36,7 +36,8 @@ def departments_page():
     employees = Employees.query.all()
     dnt_salary = avg_salaries(departments, employees)
     if request.method == 'POST':
-        departments, dnt_salary = add_dnt(departments, employees)
+        add_dnt()
+        return redirect('/departments')
     return render_template('departments.html', departments=departments, dnt_salary=dnt_salary)
 
 
@@ -44,26 +45,22 @@ def departments_page():
 def employees_page():
     """
     Function working on employees page:
-        1) adding new aployees
+        1) adding new employees
         2) Finding employees by dates of birth
     :return: the template of the employees page
     """
+
     departments = Departments.query.all()
     employees = Employees.query.all()
     if request.method == 'POST':
         if 'department' in request.form.keys() and 'name' in request.form.keys() \
                 and 'birth_date' in request.form.keys() and 'salary' in request.form.keys():
-            departments, employees = add_emp(departments, employees)
-            return render_template('employees.html', employees=employees, departments=departments)
+            add_emp()
+            return redirect('/employees')
         elif 'From' in request.form.keys() and 'To' in request.form.keys():
             departments, employees = find_emp(departments, employees)
             return render_template('employees.html', employees=employees, departments=departments)
-        else:
-            return render_template('employees.html', employees=employees, departments=departments)
-    else:
-        departments = Departments.query.all()
-        employees = Employees.query.all()
-        return render_template('employees.html', employees=employees, departments=departments)
+    return render_template('employees.html', employees=employees, departments=departments)
 
 
 @app.route('/departments/<int:id>/del')
@@ -74,7 +71,6 @@ def delete_dnt(id):
     :return: redirects user to the departments page
     """
     employees = Employees.query.all()
-    dnt = Departments.query.get_or_404(id)
     del_dnt(employees, id)
     return redirect('/departments')
 
@@ -95,7 +91,7 @@ def edit_emp(id):
     """
     Function editing information about specific employee
     :param id: id of the specific employee a user wants to change information about
-    :return: return template of the departments page
+    :return: return template of the departments page or redirects to employees page
     """
     print()
     departments = Departments.query.all()
@@ -103,8 +99,8 @@ def edit_emp(id):
     if request.method == 'POST':
         if 'department' in request.form.keys() and 'name' in request.form.keys() \
                 and 'birth_date' in request.form.keys() and 'salary' in request.form.keys():
-            departments, employees = change_emp(departments, employees, id)
-            return render_template('employees.html', employees=employees, departments=departments)
+            change_emp(id)
+            return redirect('/employees')
 
     return render_template('employees.html', id=id, departments=departments, employees=employees)
 
@@ -114,15 +110,15 @@ def edit_dnt(id):
     """
     Function editing information about specific departments
     :param id:  id of the specific department
-    :return: the template of the employees page
+    :return: the template of the employees page or redirects to departments
     """
     departments = Departments.query.all()
     employees = Employees.query.all()
     dnt_salary = avg_salaries(departments, employees)
     if request.method == 'POST':
         if 'department' in request.form.keys():
-            departments, dnt_salary = change_dnt(departments, employees, dnt_salary, id)
-            return render_template('departments.html', departments=departments, dnt_salary=dnt_salary)
+            change_dnt(employees, id)
+            return redirect('/departments')
     return render_template('departments.html', id=id, departments=departments, dnt_salary=dnt_salary)
 
 

@@ -36,50 +36,47 @@ def avg_salaries(departments, employees):
     return dnt_salary
 
 
-def add_emp(departments, employees):
+def add_emp():
     """
     Function adding new employee to specific department
-    :param departments: list of departments in the db
-    :param employees: list of employees in the db
-    :return: if no errors : list of new employees and list of departments,
-            else: unchanged list of employees and list of departments
+    :return: None
     """
     try:
         name = request.form['name']
         department = request.form['department']
         salary = int(request.form['salary'])
         birth_date = datetime.datetime.strptime(request.form['birth_date'], '%Y-%m-%d')
-        emp = Employees(name=name, department=department, birth_date=birth_date, salary=salary)
+        if salary >= 0:
+            emp = Employees(name=name, department=department, birth_date=birth_date, salary=salary)
 
-        db.session.add(emp)
-        db.session.commit()
-        departments = Departments.query.all()
-        employees = Employees.query.all()
-        return departments, employees
+            db.session.add(emp)
+            db.session.commit()
     except:
-        return departments, employees
+        print('Error working with db')
+    return None
 
 
-def add_dnt(departments, employees):
+def add_dnt():
     """
     Function adding new department to the db
-    :param departments: list of departments in the db
-    :param employees: list of employees in the db
-    :return: if no errors : list of employees and list of new departments,
-            else: unchanged list of employees and list of departments
+    :return: None
     """
     department = request.form['department']
-    dnt_salary = avg_salaries(departments, employees)
+    is_already_exists = False
     if department:
-        dnt = Departments(department=department)
-        try:
-            db.session.add(dnt)
-            db.session.commit()
-        except:
-            return departments, dnt_salary
-    departments = Departments.query.all()
-    dnt_salary = avg_salaries(departments, employees)
-    return departments, dnt_salary
+        for dnt in Departments.query.all():
+            if dnt.department == department:
+                is_already_exists = True
+                break
+        if not is_already_exists:
+            new_dnt = Departments(department=department)
+            try:
+                db.session.add(new_dnt)
+                db.session.commit()
+            except:
+                print('Error working with db')
+    return None
+
 
 
 def find_emp(departments, employees):
@@ -105,53 +102,56 @@ def find_emp(departments, employees):
         return departments, employees
 
 
-def change_emp(departments, employees, id):
+def change_emp(id):
     """
     Function changing employee`s information
-    :param departments: list of departments in the db
-    :param employees: list of employees in the db
     :param id: id of the employee a user wants to change
-    :return: if no errors : list of changed employees and list of departments,
-            else: unchanged list of employees and list of departments
+    :return: None
     """
     try:
-        emp = Employees.query.get_or_404(id)
-        emp.name = request.form['name']
-        emp.department = request.form['department']
-        emp.salary = int(request.form['salary'])
-        emp.birth_date = datetime.datetime.strptime(request.form['birth_date'], '%Y-%m-%d')
-
-        db.session.commit()
-        return departments, employees
-    except:
-        return departments, employees
-
-
-def change_dnt(departments, employees, dnt_salary, id):
-    """
-    Function changing information of department
-    :param departments: list of departments in the db
-    :param employees: list of employees in the db
-    :param dnt_salary: the dictionary of names of departments as keys and average salaries as values
-    :param id: id of the department a user wants to change
-    :return: if no errors : list of employees and list of changed departments,
-            else: unchanged list of employees and list of departments
-    """
-    try:
-        dnt = Departments.query.get_or_404(id)
-        new_name_dnt = request.form['department']
-        if new_name_dnt:
-            for emp in employees:
-                if emp.department == dnt.department:
-                    emp.department = new_name_dnt
-            dnt.department = new_name_dnt
+        name = request.form['name']
+        department = request.form['department']
+        salary = int(request.form['salary'])
+        birth_date = datetime.datetime.strptime(request.form['birth_date'], '%Y-%m-%d')
+        if salary >= 0:
+            emp = Employees.query.get_or_404(id)
+            emp.name = name
+            emp.department = department
+            emp.salary = salary
+            emp.birth_date = birth_date
 
             db.session.commit()
-            return departments, dnt_salary
-        else:
-            return departments, dnt_salary
     except:
-        return departments, dnt_salary
+        print('Error working with db')
+    return None
+
+def change_dnt(employees, id):
+    """
+    Function changing information of department
+    :param employees: list of employees in the db
+    :param id: id of the department a user wants to change
+    :return: None
+    """
+
+    dnt = Departments.query.get_or_404(id)
+    new_name_dnt = request.form['department']
+    is_already_exists = False
+    if new_name_dnt:
+        for d in Departments.query.all():
+            if d.department == new_name_dnt and d.id != dnt.id:
+                is_already_exists = True
+                break
+        if not is_already_exists:
+            try:
+                for emp in employees:
+                    if emp.department == dnt.department:
+                        emp.department = new_name_dnt
+                dnt.department = new_name_dnt
+
+                db.session.commit()
+            except:
+                print('Error working with db')
+    return None
 
 def del_dnt(employees, id):
     dnt = Departments.query.get_or_404(id)
@@ -163,6 +163,7 @@ def del_dnt(employees, id):
         db.session.commit()
     except:
         print('Error working with db')
+    return None
 
 def del_emp(id):
     emp = Employees.query.get_or_404(id)
@@ -171,3 +172,4 @@ def del_emp(id):
         db.session.commit()
     except:
         print('Error working with db')
+    return None

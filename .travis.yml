@@ -2,7 +2,7 @@ language: python
 python:
   - 3.6.7
 script:
-  - python -m pytest -v
+  - python -m pytest -v tests/test.py
 notifications:
   email:
     recipients:

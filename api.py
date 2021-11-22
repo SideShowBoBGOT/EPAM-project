@@ -1,22 +1,13 @@
-from flask import Flask, render_template, request, redirect
-from flask_sqlalchemy import SQLAlchemy
-
-
-
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sql/company.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-
-from project.models.comp import Employees, Departments
-
-from project.service.db_methods import avg_salaries, add_emp, add_dnt, find_emp, change_emp, change_dnt,\
+from project.models.employees import Employees
+from project.models.departments import Departments
+from flask import Flask, render_template, request, redirect, Blueprint
+from project.service import avg_salaries, add_emp, add_dnt, find_emp, change_emp, change_dnt,\
     del_dnt, del_emp
 
 
+api = Blueprint('api', __name__)
 
-
-@app.route('/')
+@api.route('/')
 def index():
     """
     Function returning the template of the main page
@@ -25,7 +16,7 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/departments', methods=['POST', 'GET'])
+@api.route('/departments', methods=['POST', 'GET'])
 def departments_page():
     """
     Function working on departments page:
@@ -42,7 +33,7 @@ def departments_page():
     return render_template('departments.html', departments=departments, dnt_salary=dnt_salary)
 
 
-@app.route('/employees', methods=['POST', 'GET'])
+@api.route('/employees', methods=['POST', 'GET'])
 def employees_page():
     """
     Function working on employees page:
@@ -64,7 +55,7 @@ def employees_page():
     return render_template('employees.html', employees=employees, departments=departments)
 
 
-@app.route('/departments/<int:id>/del')
+@api.route('/departments/<int:id>/del')
 def delete_dnt(id):
     """
     Function deleting specific department by its id
@@ -76,7 +67,7 @@ def delete_dnt(id):
     return redirect('/departments')
 
 
-@app.route('/employees/<int:id>/del')
+@api.route('/employees/<int:id>/del')
 def delete_emp(id):
     """
     Function deleting specific employee by its id
@@ -87,7 +78,7 @@ def delete_emp(id):
     return redirect('/employees')
 
 
-@app.route('/employees/<int:id>/edit', methods=['GET', 'POST'])
+@api.route('/employees/<int:id>/edit', methods=['GET', 'POST'])
 def edit_emp(id):
     """
     Function editing information about specific employee
@@ -105,7 +96,7 @@ def edit_emp(id):
     return render_template('employees.html', id=id, departments=departments, employees=employees)
 
 
-@app.route('/departments/<int:id>/edit', methods=['GET', 'POST'])
+@api.route('/departments/<int:id>/edit', methods=['GET', 'POST'])
 def edit_dnt(id):
     """
     Function editing information about specific departments
@@ -120,7 +111,3 @@ def edit_dnt(id):
             change_dnt(employees, id)
             return redirect('/departments')
     return render_template('departments.html', id=id, departments=departments, dnt_salary=dnt_salary)
-
-
-if __name__ == '__main__':
-    app.run(debug=True)

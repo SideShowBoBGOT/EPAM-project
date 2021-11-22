@@ -1,12 +1,13 @@
-try:
-    from project.proj import app, Employees, Departments
-except:
-    from proj import app, Employees, Departments
+import sys, os
+
+sys.path.append(os.path.abspath(os.path.join('..')))
+
+
+from project import app, Employees, Departments
 from bs4 import BeautifulSoup
 import unittest
 import datetime
-
-
+i
 class FlaskTestCases(unittest.TestCase):
 
     # Ensure that Flask was set up correctly

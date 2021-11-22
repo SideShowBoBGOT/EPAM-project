@@ -1,5 +1,5 @@
-from project.proj import app, db, Employees, Departments
-from bs4 import BeautifulSoup, Tag
+from project.proj import app, Employees, Departments
+from bs4 import BeautifulSoup
 import unittest
 import datetime
 

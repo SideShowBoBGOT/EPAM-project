@@ -9,8 +9,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 from project.models.comp import Employees, Departments
-from project.service.db_methods import avg_salaries, add_emp, add_dnt, find_emp, change_emp, change_dnt, del_dnt, \
-    del_emp
+
+from project.service.db_methods import avg_salaries, add_emp, add_dnt, find_emp, change_emp, change_dnt,\
+    del_dnt, del_emp
 
 
 

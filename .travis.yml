@@ -1,6 +1,8 @@
 language: python
 python:
-  - 3.6
+  - 3.6.7
+script:
+  - python -m pytest -v
 notifications:
   email:
     recipients:

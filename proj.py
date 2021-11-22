@@ -93,7 +93,6 @@ def edit_emp(id):
     :param id: id of the specific employee a user wants to change information about
     :return: return template of the departments page or redirects to employees page
     """
-    print()
     departments = Departments.query.all()
     employees = Employees.query.all()
     if request.method == 'POST':

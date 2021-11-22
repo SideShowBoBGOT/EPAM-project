@@ -1,4 +1,7 @@
-from project.proj import app, Employees, Departments
+try:
+    from project.proj import app, Employees, Departments
+except:
+    from proj import app, Employees, Departments
 from bs4 import BeautifulSoup
 import unittest
 import datetime

@@ -1,17 +1,18 @@
-import sys, os
+import os
+import sys
 
 sys.path.append(os.path.abspath(os.path.join('..')))
 
-
-from project import create_app
+from __init__ import create_app
 from bs4 import BeautifulSoup
 import unittest
 import datetime
 
 app = create_app()
 app.app_context().push()
-from project.models.departments import Departments
-from project.models.employees import Employees
+from models.departments import Departments
+from models.employees import Employees
+
 
 class FlaskTestCases(unittest.TestCase):
 

@@ -1,7 +1,9 @@
-import sys, os
+import os
+import sys
 
 sys.path.append(os.path.abspath(os.path.join('..')))
-from project import db
+
+from __init__ import db
 
 
 class Departments(db.Model):

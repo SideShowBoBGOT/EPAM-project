@@ -1,12 +1,14 @@
-from flask import request
 import datetime
-import sys, os
+import os
+import sys
+
+from flask import request
 
 sys.path.append(os.path.abspath(os.path.join('..')))
 
-from project import db
-from project.models.employees import Employees
-from project.models.departments import Departments
+from __init__ import db
+from models.employees import Employees
+from models.departments import Departments
 
 
 

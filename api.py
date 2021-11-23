@@ -1,7 +1,7 @@
-from project.models.employees import Employees
-from project.models.departments import Departments
+from models.employees import Employees
+from models.departments import Departments
 from flask import Flask, render_template, request, redirect, Blueprint
-from project.service import avg_salaries, add_emp, add_dnt, find_emp, change_emp, change_dnt,\
+from service import avg_salaries, add_emp, add_dnt, find_emp, change_emp, change_dnt,\
     del_dnt, del_emp
 
 

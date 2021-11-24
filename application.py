@@ -10,7 +10,7 @@ def create_app():
     app.config.from_object(config)
     db.init_app(app)
 
-    from project.api import api
+    from api import api
     app.register_blueprint(api)
 
     return app

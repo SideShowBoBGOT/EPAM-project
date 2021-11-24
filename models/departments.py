@@ -3,7 +3,7 @@ import sys
 
 sys.path.append(os.path.abspath(os.path.join('..')))
 
-from __init__ import db
+from application import db
 
 
 class Departments(db.Model):

@@ -6,7 +6,7 @@ from flask import request
 
 sys.path.append(os.path.abspath(os.path.join('..')))
 
-from __init__ import db
+from application import db
 from models.employees import Employees
 from models.departments import Departments
 
@@ -57,7 +57,7 @@ def add_emp():
             db.session.add(emp)
             db.session.commit()
     except:
-        print('Error working with db')
+        print('Error working with adding employee')
     return None
 
 
@@ -79,7 +79,7 @@ def add_dnt():
                 db.session.add(new_dnt)
                 db.session.commit()
             except:
-                print('Error working with db')
+                print('Error working with adding department')
     return None
 
 
@@ -127,7 +127,7 @@ def change_emp(id):
 
             db.session.commit()
     except:
-        print('Error working with db')
+        print('Error working with changing employee')
     return None
 
 def change_dnt(employees, id):
@@ -155,7 +155,7 @@ def change_dnt(employees, id):
 
                 db.session.commit()
             except:
-                print('Error working with db')
+                print('Error working with changing department')
     return None
 
 def del_dnt(employees, id):
@@ -167,7 +167,7 @@ def del_dnt(employees, id):
                 db.session.delete(emp)
         db.session.commit()
     except:
-        print('Error working with db')
+        print('Error working with deleting department')
     return None
 
 def del_emp(id):
@@ -176,5 +176,5 @@ def del_emp(id):
         db.session.delete(emp)
         db.session.commit()
     except:
-        print('Error working with db')
+        print('Error working with deleting employee')
     return None

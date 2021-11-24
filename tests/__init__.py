@@ -3,18 +3,19 @@ import sys
 
 sys.path.append(os.path.abspath(os.path.join('..')))
 
-from __init__ import create_app
-from bs4 import BeautifulSoup
-import unittest
-import datetime
-
-app = create_app()
-app.app_context().push()
 from models.departments import Departments
 from models.employees import Employees
 
+from wsgi import app
+app.app_context().push()
+import unittest
+import datetime
+from bs4 import BeautifulSoup
+
+
 
 class FlaskTestCases(unittest.TestCase):
+
 
     # Ensure that Flask was set up correctly
     def test_index(self):

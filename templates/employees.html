@@ -89,14 +89,16 @@ Employees
                   <form method="post" class="row g-3 needs-validation" novalidate>
                             <tr>
                                   <td><input type="text"  name="name" class="form-control" id="validationCustom08" value="{{ emp.name }}" required></td>
-                                  <td><select name="department" class="form-select" id="validationCustom09" required>
-                                    <option selected disabled value="{{ emp.department }}">Choose department</option>
+                                  <td><select name="department" class="form-select" id="validationCustom09"  required>
+                                    <option selected >{{ emp.department }}</option>
                                       {% for dnt in departments %}
+                                        {% if dnt.department != emp.department %}
                                           <option>{{ dnt.department }}</option>
+                                        {% endif %}
                                       {% endfor %}
                                   </select></td>
                                     <td><input name="salary" type="text" class="form-control" id="validationCustom10" value="{{ emp.salary }}" required></td>
-                                    <td><input name="birth_date" id="validationCustom11" type="date" class="form-control"></td>
+                                    <td><input name="birth_date" id="validationCustom11" type="date" class="form-control" value="{{ emp.birth_date }}"></td>
                                     <td>
                                  <a href="/employees" class="btn btn-danger">Cancel</a>
                                 <button class="btn btn-success" type="submit">Change</button>

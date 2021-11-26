@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Departments
+Users
 {% endblock %}
 {% block body %}
 <div class="container">
         <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
           <ul class="nav nav-pills">
-              <li class="nav-item"><a href="/users" class="nav-link">Users</a></li>
-            <li class="nav-item"><a href="/departments" class="nav-link active">Departments</a></li>
+              <li class="nav-item"><a href="/users" class="nav-link active">Users</a></li>
+            <li class="nav-item"><a href="/departments" class="nav-link">Departments</a></li>
             <li class="nav-item"><a href="/employees" class="nav-link">Employees</a></li>
           </ul>
             <div class="col-md-3 text-end">
@@ -19,11 +19,14 @@ Departments
         </header>
       </div>
     <div class="container mt-5">
-        <h1>Add department</h1>
+        <h1>Add user</h1>
         <form method="post" class="row g-3 needs-validation">
             <div class="col-md-2">
-                <input type="text" name="department" id="department" class="form-control" placeholder="Input new department">
-            </div>
+                  <input type="text"  name="login" class="form-control" id="validationCustom01" placeholder="Login" required>
+                </div>
+            <div class="col-md-2">
+                  <input type="text"  name="password" class="form-control" id="validationCustom02" placeholder="Password" required>
+                </div>
             <div class="col-md-2">
                 <button class="btn btn-primary" type="submit">Add</button>
             </div>
@@ -32,47 +35,37 @@ Departments
             </div>
 
         </form>
-        <h1>Departments</h1>
+        <h1>Users</h1>
         <table id="data" class="table table-striped">
             <thead>
               <tr>
-                <th>Department</th>
-                  <th>Average salary</th>
+                <th>Logins</th>
+                  <th>Passwords</th>
                   <th></th>
               </tr>
             </thead>
             <tbody>
-              {% for dnt in departments %}
+              {% for user in users %}
                 <tr>
-                        {% if dnt.id == id %}
+                        {% if user.id == id %}
                      <form method="post" class="row g-3 needs-validation" novalidate>
+                            <td><input type="text"  name="new_login" class="form-control" id="validationCustom08" value="{{ user.login }}" required></td>
+                            <td><input type="text"  name="new_password" class="form-control" id="validationCustom09" value="{{ user.password }}" required></td>
                             <td>
-                                <input type="text" name="new_department" class="form-control" value="{{ dnt.department }}">
-                            </td>
-                            <td>{% for dnt_name in dnt_salary %}
-                              {% if dnt.department == dnt_name %}
-                                {{ dnt_salary[dnt_name] }}
-                              {% endif %}
-                              {% endfor %}
-                          </td>
-                            <td>
-                                <a href="/departments" class="btn btn-danger">Cancel</a>
+                                <a href="/users" class="btn btn-danger">Cancel</a>
                                 <button class="btn btn-success" type="submit">Change</button>
                             </td>
                      </form>
                         {% else %}
                     <td>
-                      {{ dnt.department }}
+                      {{ user.login }}
                     </td>
-                  <td>{% for dnt_name in dnt_salary %}
-                      {% if dnt.department == dnt_name %}
-                        {{ dnt_salary[dnt_name] }}
-                      {% endif %}
-                      {% endfor %}
-                  </td>
+                    <td>
+                      {{ user.password }}
+                    </td>
                      <td>
-                         <a href="/departments/{{ dnt.id }}/del" class="btn btn-danger">Delete</a>
-                        <a href="/departments/{{ dnt.id }}/edit" class="btn btn-success">Edit</a>
+                         <a href="/users/{{ user.id }}/del" class="btn btn-danger">Delete</a>
+                        <a href="/users/{{ user.id }}/edit" class="btn btn-success">Edit</a>
                     </td>
                     {% endif %}
                 </tr>

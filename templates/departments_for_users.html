@@ -19,48 +19,17 @@ Departments
         </header>
       </div>
     <div class="container mt-5">
-        <h1>Add department</h1>
-        <form method="post" class="row g-3 needs-validation">
-            <div class="col-md-2">
-                <input type="text" name="department" id="department" class="form-control" placeholder="Input new department">
-            </div>
-            <div class="col-md-2">
-                <button class="btn btn-primary" type="submit">Add</button>
-            </div>
-            <div>
-                <br>
-            </div>
-
-        </form>
         <h1>Departments</h1>
         <table id="data" class="table table-striped">
             <thead>
               <tr>
                 <th>Department</th>
                   <th>Average salary</th>
-                  <th></th>
               </tr>
             </thead>
             <tbody>
               {% for dnt in departments %}
                 <tr>
-                        {% if dnt.id == id %}
-                     <form method="post" class="row g-3 needs-validation" novalidate>
-                            <td>
-                                <input type="text" name="new_department" class="form-control" value="{{ dnt.department }}">
-                            </td>
-                            <td>{% for dnt_name in dnt_salary %}
-                              {% if dnt.department == dnt_name %}
-                                {{ dnt_salary[dnt_name] }}
-                              {% endif %}
-                              {% endfor %}
-                          </td>
-                            <td>
-                                <a href="/departments" class="btn btn-danger">Cancel</a>
-                                <button class="btn btn-success" type="submit">Change</button>
-                            </td>
-                     </form>
-                        {% else %}
                     <td>
                       {{ dnt.department }}
                     </td>
@@ -70,11 +39,6 @@ Departments
                       {% endif %}
                       {% endfor %}
                   </td>
-                     <td>
-                         <a href="/departments/{{ dnt.id }}/del" class="btn btn-danger">Delete</a>
-                        <a href="/departments/{{ dnt.id }}/edit" class="btn btn-success">Edit</a>
-                    </td>
-                    {% endif %}
                 </tr>
               {% endfor %}
             </tbody>

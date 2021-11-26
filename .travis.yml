@@ -2,7 +2,8 @@ language: python
 python:
   - 3.6.7
 script:
-  - python -m pytest -v tests/test.py
+  - python -m pytest -v tests/unittests.py
+  - pip install -r requirements.txt
 notifications:
   email:
     recipients:

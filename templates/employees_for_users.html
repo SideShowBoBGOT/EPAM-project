@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Employees
+{% endblock %}
+{% block body %}
+<div class="container">
+        <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+          <ul class="nav nav-pills">
+              <li class="nav-item"><a href="/users" class="nav-link">Users</a></li>
+            <li class="nav-item"><a href="/departments" class="nav-link">Departments</a></li>
+            <li class="nav-item"><a href="/employees" class="nav-link active">Employees</a></li>
+          </ul>
+            <div class="col-md-3 text-end">
+                <a href="/logout">
+                    <button type="button" class="btn btn-danger">Logout</button>
+                </a>
+              </div>
+        </header>
+      </div>
+
+<div class="container mt-5">
+    <h1>Find an employee by date</h1>
+     <form id="find_by_date" method="post" class="row g-3 needs-validation" novalidate>
+        <div class="col-md-2">
+                    <label for="validationCustom1" class="form-label">From</label>
+                    <input name="From" id="validationCustom0" type="date" class="form-control">
+        </div>
+         <div class="col-md-2">
+                    <label for="validationCustom1" class="form-label">To</label>
+                    <input name="To" id="validationCustom1" type="date" class="form-control">
+        </div>
+         <div class="col-12">
+                <button class="btn btn-primary" type="submit">Find employee</button>
+              </div>
+     </form>
+</div>
+<div class="container mt-5">
+    <h1>Employees</h1>
+        <table id="data" class="table table-striped">
+            <thead>
+              <tr>
+                <th>Full name</th>
+                  <th>Department</th>
+                  <th>Salary</th>
+                  <th>Date of birth</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for emp in employees %}
+
+                <tr>
+                  <td>{{ emp.name }}</td>
+                  <td>{{ emp.department }}</td>
+                    <td>{{ emp.salary }}</td>
+                    <td>{{ emp.birth_date }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+        </table>
+</div>
+<script type="text/javascript">
+document.documentElement.style.scrollBehavior = 'auto';
+        document.addEventListener("DOMContentLoaded", function(event) {
+            var scrollpos = localStorage.getItem('scrollpos');
+            if (scrollpos) {
+                window.scrollTo({behavior: "instant"});
+                window.scrollTo(0, scrollpos);
+            }
+        });
+
+        window.onbeforeunload = function(e) {
+            localStorage.setItem('scrollpos', window.scrollY);
+        };
+</script>
+{% endblock %}

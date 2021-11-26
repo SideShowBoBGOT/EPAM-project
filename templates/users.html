@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Users
+{% endblock %}
+{% block body %}
+<div class="container">
+       <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+          <ul class="nav nav-pills">
+              <li class="nav-item"><a href="/users" class="nav-link active">Users</a></li>
+            <li class="nav-item"><a href="/departments" class="nav-link">Departments</a></li>
+            <li class="nav-item"><a href="/employees" class="nav-link">Employees</a></li>
+          </ul>
+            <div class="col-md-3 text-end">
+                <a href="/logout">
+                    <button type="button" class="btn btn-danger">Logout</button>
+                </a>
+              </div>
+        </header>
+      </div>
+    <div class="container mt-5">
+        <h1>Your credentials</h1>
+        <table id="data" class="table table-striped">
+            <thead>
+              <tr>
+                <th>Login</th>
+                  <th>Password</th>
+              </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                      {{ user.login }}
+                    </td>
+                    <td>
+                      {{ user.password }}
+                    </td>
+                </tr>
+            </tbody>
+  </table>
+    </div>
+<script type="text/javascript">
+document.documentElement.style.scrollBehavior = 'auto';
+        document.addEventListener("DOMContentLoaded", function(event) {
+            var scrollpos = localStorage.getItem('scrollpos');
+            if (scrollpos) {
+                window.scrollTo({behavior: "instant"});
+                window.scrollTo(0, scrollpos);
+            }
+        });
+
+        window.onbeforeunload = function(e) {
+            localStorage.setItem('scrollpos', window.scrollY);
+        };
+</script>
+{% endblock %}

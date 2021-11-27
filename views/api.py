@@ -1,6 +1,6 @@
 import os
 import sys
-
+import datetime
 from flask_login import login_user, login_required, logout_user
 
 sys.path.append(os.path.abspath(os.path.join('..')))
@@ -13,13 +13,12 @@ from service import avg_salaries, add_emp, add_dnt, find_emp, change_emp, change
     del_dnt, del_emp, add_user, del_user, change_user
 from werkzeug.security import check_password_hash
 
-
-ADMIN = 'admin'
+ADMIN = User.query.get(1).login
 api = Blueprint('api', __name__)
+
 
 @api.route('/', methods=['GET', 'POST'])
 def login_page():
-
     """
     Function returning the template of the main page
     :return: the template of the main page
@@ -42,21 +41,25 @@ def login_page():
             flash('Please, fill login and password fields')
     return render_template('index.html')
 
+
 @api.route('/logout')
 @login_required
 def logout_page():
     logout_user()
     return redirect('/')
 
+
 @api.before_request
 def make_session_permanent():
     session.permanent = False
+
 
 @api.after_request
 def redirect_to_sign_in(response):
     if response.status_code == 401:
         return redirect(url_for('api.login_page') + '?next=' + request.url)
     return response
+
 
 @api.route('/users', methods=['POST', 'GET'])
 @login_required
@@ -70,7 +73,10 @@ def users_page():
     if session.get('user') == ADMIN:
         users = User.query.all()
         if request.method == 'POST':
-            add_user()
+            login = request.form.get('login')
+            password = request.form.get('password')
+            if login and password and not User.query.filter_by(login=login).first():
+                add_user(login, password)
             return redirect('/users')
         return render_template('users_for_admin.html', users=users)
     user = User.query.filter_by(login=session.get('user')).first()
@@ -91,7 +97,9 @@ def departments_page():
     dnt_salary = avg_salaries(departments, employees)
     if session.get('user') == ADMIN:
         if request.method == 'POST':
-            add_dnt()
+            department = request.form.get('department')
+            if department and not Departments.query.filter_by(department=department):
+                add_dnt(department)
             return redirect('/departments')
         return render_template('departments.html', departments=departments, dnt_salary=dnt_salary)
     return render_template('departments_for_users.html', departments=departments, dnt_salary=dnt_salary)
@@ -111,12 +119,19 @@ def employees_page():
     employees = Employees.query.all()
     if session.get('user') == ADMIN:
         if request.method == 'POST':
-            if 'department' in request.form.keys() and 'name' in request.form.keys() \
-                    and 'birth_date' in request.form.keys() and 'salary' in request.form.keys():
-                add_emp()
+            name = request.form.get('name')
+            department = request.form.get('department')
+            salary = request.form.get('salary')
+            birth_date = request.form.get('birth_date')
+
+            from_date = request.form.get('From')
+            to_date = request.form.get('To')
+
+            if name and department and salary and birth_date:
+                add_emp(name, department, salary, birth_date)
                 return redirect('/employees')
-            elif 'From' in request.form.keys() and 'To' in request.form.keys():
-                departments, employees = find_emp(departments, employees)
+            elif from_date and to_date:
+                employees = find_emp(from_date, to_date)
         return render_template('employees.html', employees=employees, departments=departments)
     if request.method == 'POST':
         if 'From' in request.form.keys() and 'To' in request.form.keys():
@@ -133,7 +148,7 @@ def delete_user(id):
     :return: redirects user to the users page
     """
     if session.get('user') == ADMIN:
-        if User.query.get(id).login != ADMIN:
+        if User.query.get_or_404(id).login != ADMIN:
             del_user(id)
         return redirect('/users')
 
@@ -147,8 +162,7 @@ def delete_dnt(id):
     :return: redirects user to the departments page
     """
     if session.get('user') == ADMIN:
-        employees = Employees.query.all()
-        del_dnt(employees, id)
+        del_dnt(id)
         return redirect('/departments')
 
 
@@ -164,6 +178,7 @@ def delete_emp(id):
         del_emp(id)
         return redirect('/employees')
 
+
 @api.route('/users/<int:id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_user(id):
@@ -174,12 +189,15 @@ def edit_user(id):
     """
     if session.get('user') == ADMIN:
         users = User.query.all()
+        if User.query.get(id):
+            if request.method == 'POST':
+                change_user(id)
+                return redirect('/users')
 
-        if request.method == 'POST':
-            change_user(id)
+            return render_template('users_for_admin.html', id=id, users=users)
+        else:
             return redirect('/users')
 
-        return render_template('users_for_admin.html', id=id, users=users)
 
 @api.route('/employees/<int:id>/edit', methods=['GET', 'POST'])
 @login_required
@@ -192,11 +210,14 @@ def edit_emp(id):
     if session.get('user') == ADMIN:
         departments = Departments.query.all()
         employees = Employees.query.all()
-        if request.method == 'POST':
+        if Employees.query.get(id):
+            if request.method == 'POST':
                 change_emp(id)
                 return redirect('/employees')
 
-        return render_template('employees.html', id=id, departments=departments, employees=employees)
+            return render_template('employees.html', id=id, departments=departments, employees=employees)
+        else:
+            return redirect('/employees')
 
 
 @api.route('/departments/<int:id>/edit', methods=['GET', 'POST'])
@@ -211,7 +232,10 @@ def edit_dnt(id):
         departments = Departments.query.all()
         employees = Employees.query.all()
         dnt_salary = avg_salaries(departments, employees)
-        if request.method == 'POST':
-                change_dnt(employees, id)
+        if Departments.query.get(id):
+            if request.method == 'POST':
+                change_dnt(id)
                 return redirect('/departments')
-        return render_template('departments.html', id=id, departments=departments, dnt_salary=dnt_salary)
+            return render_template('departments.html', id=id, departments=departments, dnt_salary=dnt_salary)
+        else:
+            return redirect('/departments')

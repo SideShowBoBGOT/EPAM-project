@@ -6,15 +6,13 @@ sys.path.append(os.path.abspath(os.path.join('..')))
 from models.departments import Departments
 from models.employees import Employees
 from models.users import User
-
 from wsgi import app
 
-app.app_context().push()
 import unittest
 import datetime
 from bs4 import BeautifulSoup
 
-USERS = User.query.all()
+app.app_context().push()
 ADMIN_LOGIN = User.query.get(1).login
 ADMIN_PASSWORD = User.query.get(1).password
 
@@ -89,8 +87,8 @@ class FlaskTestCases(unittest.TestCase):
                                follow_redirects=True)
 
         user_to_edit_id = User.query.all()[-1].id
-        login =  User.query.all()[-1].login
-        password =  User.query.all()[-1].password
+        login = User.query.all()[-1].login
+        password = User.query.all()[-1].password
         prev_user_num = len(User.query.all())
         user = User.query.all()[-1]
         new_user_login = 'rararararar'
@@ -179,8 +177,6 @@ class FlaskTestCases(unittest.TestCase):
         new_dnt_num = len(Departments.query.all())
         self.assertTrue(new_dnt_num == prev_dnt_num)
 
-
-
     # Ensure the departments page behaves correctly canceling changing a dnt
     def test_dnt_page_cancel_edit(self):
         tester = app.test_client(self)
@@ -202,7 +198,7 @@ class FlaskTestCases(unittest.TestCase):
         department = Departments.query.all()[-1].department
         response = tester.post(f'/departments/{id}/edit', data=dict(new_department='Ruby'), follow_redirects=True)
         self.assertTrue(Departments.query.all()[-1].department == 'Ruby')
-        #set previous name of department
+        # set previous name of department
         response = tester.post(f'/departments/{id}/edit', data=dict(new_department=department), follow_redirects=True)
 
     # Ensure the departments page behaves correctly changing a dnt given incorrect name of dnt
@@ -325,8 +321,6 @@ class FlaskTestCases(unittest.TestCase):
         response2 = tester.post('/employees', data=dict(From=f, To=t), follow_redirects=True)
         self.assertTrue(response1.data == response2.data)
 
-
-
     # Ensure the employees page behaves correctly changing emp given correct credentials
     def test_emp_page_edit(self):
         tester = app.test_client(self)
@@ -419,6 +413,7 @@ class FlaskTestCases(unittest.TestCase):
         response = tester.get(f'/employees/{id}/del', follow_redirects=True)
         new_emp_num = len(Employees.query.all())
         self.assertFalse(prev_emp_num == new_emp_num)
+
 
 if __name__ == '__main__':
     unittest.main()

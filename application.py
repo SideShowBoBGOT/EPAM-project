@@ -19,6 +19,8 @@ def create_app():
     # db.create_all()
     from views.api import api
     app.register_blueprint(api)
+    from rest.rest_api import r_api
+    r_api.init_app(app)
 
     return app
 

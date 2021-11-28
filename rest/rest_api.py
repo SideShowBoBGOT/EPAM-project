@@ -1,8 +1,8 @@
 from flask import Flask, request
-from flask_restful import Api, Resource
+from flask_restful import Api, Resource, abort
 import os
 import sys
-
+import datetime
 sys.path.append(os.path.abspath(os.path.join('..')))
 
 from application import db
@@ -17,15 +17,49 @@ r_api = Api()
 
 
 class UserAPI(Resource):
-    def get(self):
-        users = dict()
-        for user in User.query.all():
-            users[user.id] = {'login': user.login,
-                              'password': user.password}
-        return users
+    def get(self, login, password):
+        if login and password:
+            user = User.query.filter_by(login=login).first()
+            if user and user.password == password:
+                # admin`s id is 1
+                if user.id == 1 and user.password == password:
+                    users = dict()
+                    for usr in User.query.all():
+                        users[usr.id] = {'id': usr.id, 'login': usr.login,
+                                         'password': usr.password}
+                    return users
+                return {'id': user.id, 'login': user.login,
+                        'password': user.password}
+        abort(401, error='CREDENTIALS_INCORRECT')
+
+    def post(self, login, password):
+        if login and password:
+            user = User.query.filter_by(login=login).first()
+            # admin`s id is 1
+            if user and user.id == 1 and user.password == password:
+                user_login = request.form.get('login')
+                user_password = request.form.get('password')
+                id = request.form.get('id')
+                func = request.form.get('func')
+                if func == 'add' and user_login and user_password:
+                    if not user_login in User.query.filter_by(login=user_login):
+                        add_user(user_login, user_password)
+                        return {'message': 'ADD_SUCCESS'}
+                    abort(404, error='DNT_NAME_ALREADY_USED')
+                elif func == 'edit' and user_login \
+                        and user_password and id and User.query.get(id):
+                    change_user(id, user_login, user_password)
+                    return {'message': 'EDIT_SUCCESS'}
+                elif func == 'del' and id:
+                    if id != 1:
+                        del_user(id)
+                        return {'message': 'DEL_SUCCESS'}
+                    abort(406, error='ADMIN_UNDELETABLE')
+                abort(406, error='ARGUMENTS_INCORRECT')
+        abort(401, error='CREDENTIALS_INCORRECT')
 
 
-r_api.add_resource(UserAPI, '/users')
+r_api.add_resource(UserAPI, '/api/<string:login>/<string:password>/users')
 
 
 class DepartmentsAPI(Resource):
@@ -41,26 +75,91 @@ class DepartmentsAPI(Resource):
                     departments_dict[f'{index}'] = {'id': dnt.id, 'department': dnt.department,
                                                     'avg_salary': dnt_salary[dnt.department]}
                 return departments_dict
-        return {'error': 'CREDENTIALS_INCORRECT'}
+        abort(401, error='CREDENTIALS_INCORRECT')
 
     def post(self, login, password):
         if login and password:
             user = User.query.filter_by(login=login).first()
             # admin`s id is 1
             if user and user.id == 1 and user.password == password:
-                if request.form['func'] == 'add' and request.form['department']:
-                    add_dnt()
-                    return {'message': 'ADD_SUCCESS'}
-                elif request.form['func'] == 'edit' and request.form['new_department'] and request.form['id']:
-                    change_dnt(request.form['id'])
-                elif request.form['func'] == 'del'and request.form['ss']:
-                    pass
-                return {'error': 'ARGUMENTS_INCORRECT'}
+                department = request.form.get('department')
+                id = request.form.get('id')
+                func = request.form.get('func')
+                if func == 'add' and department:
+                    if not department in Departments.query.filter_by(department=department):
+                        add_dnt(department)
+                        return {'message': 'ADD_SUCCESS'}
+                    abort(406, error='DNT_NAME_ALREADY_USED')
+                elif func == 'edit' and department and id and Departments.query.get(id):
+                    change_dnt(id, department)
+                    return {'message': 'EDIT_SUCCESS'}
+                elif func == 'del' and id:
+                    del_dnt(id)
+                    return {'message': 'DEL_SUCCESS'}
+                abort(406, error='ARGUMENTS_INCORRECT')
+        abort(401, error='CREDENTIALS_INCORRECT')
 
 
 r_api.add_resource(DepartmentsAPI, '/api/<string:login>/<string:password>/departments')
 
 
-
 class EmployeesAPI(Resource):
-    pass
+    def get(self, login, password):
+        if login and password:
+            user = User.query.filter_by(login=login).first()
+            if user and user.password == password:
+                employees_dict = dict()
+                employees = Employees.query.all()
+                for index, emp in enumerate(employees):
+                    employees_dict[f'{index}'] = {'id': emp.id, 'name': emp.name,
+                                                  'department': emp.department,
+                                                    'salary': emp.salary,
+                                                  'birth_date': str(emp.birth_date)}
+                return employees_dict
+        abort(401, error='CREDENTIALS_INCORRECT')
+
+    def post(self, login, password):
+        if login and password:
+            user = User.query.filter_by(login=login).first()
+            # admin`s id is 1
+            if user and user.password == password:
+                name = request.form.get('name')
+                department = request.form.get('department')
+                salary = request.form.get('salary')
+                birth_date = request.form.get('birth_date')
+
+                from_date = request.form.get('From')
+                to_date = request.form.get('To')
+                id = request.form.get('id')
+                func = request.form.get('func')
+
+                if func == 'find' and from_date and to_date:
+                    from_date = datetime.datetime.strptime(from_date, '%Y-%m-%d').date()
+                    to_date = datetime.datetime.strptime(to_date, '%Y-%m-%d').date()
+                    if to_date >= from_date:
+                        employees = find_emp(from_date, to_date)
+                        employees_dict = dict()
+                        for index, emp in enumerate(employees):
+                            employees_dict[f'{index}'] = {'id': emp.id, 'name': emp.name,
+                                                          'department': emp.department,
+                                                          'salary': emp.salary,
+                                                          'birth_date': str(emp.birth_date)}
+                        return employees_dict
+                    abort(406, error='DATES_INCORRECT')
+                if user.id == 1:
+                    if func == 'add' and department:
+                        if not department in Departments.query.filter_by(department=department):
+                            add_dnt(department)
+                            return {'message': 'ADD_SUCCESS'}
+                        abort(406, error='DNT_NAME_ALREADY_USED')
+                    elif func == 'edit' and department and id and Departments.query.get(id):
+                        change_dnt(id, department)
+                        return {'message': 'EDIT_SUCCESS'}
+                    elif func == 'del' and id:
+                        del_dnt(id)
+                        return {'message': 'DEL_SUCCESS'}
+                    abort(406, error='ARGUMENTS_INCORRECT')
+        abort(401, error='CREDENTIALS_INCORRECT')
+
+
+r_api.add_resource(EmployeesAPI, '/api/<string:login>/<string:password>/employees')

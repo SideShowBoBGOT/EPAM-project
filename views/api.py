@@ -131,7 +131,10 @@ def employees_page():
                 add_emp(name, department, salary, birth_date)
                 return redirect('/employees')
             elif from_date and to_date:
-                employees = find_emp(from_date, to_date)
+                from_date = datetime.datetime.strptime(from_date, '%Y-%m-%d').date()
+                to_date = datetime.datetime.strptime(to_date, '%Y-%m-%d').date()
+                if to_date >= from_date:
+                    employees = find_emp(from_date, to_date)
         return render_template('employees.html', employees=employees, departments=departments)
     if request.method == 'POST':
         if 'From' in request.form.keys() and 'To' in request.form.keys():
@@ -148,7 +151,7 @@ def delete_user(id):
     :return: redirects user to the users page
     """
     if session.get('user') == ADMIN:
-        if User.query.get_or_404(id).login != ADMIN:
+        if User.query.get(id).login != ADMIN:
             del_user(id)
         return redirect('/users')
 
@@ -191,12 +194,13 @@ def edit_user(id):
         users = User.query.all()
         if User.query.get(id):
             if request.method == 'POST':
-                change_user(id)
+                login = request.form.get('new_login')
+                password = request.form.get('new_password')
+                if login and password:
+                    change_user(id, login, password)
                 return redirect('/users')
-
             return render_template('users_for_admin.html', id=id, users=users)
-        else:
-            return redirect('/users')
+        return redirect('/users')
 
 
 @api.route('/employees/<int:id>/edit', methods=['GET', 'POST'])
@@ -212,12 +216,15 @@ def edit_emp(id):
         employees = Employees.query.all()
         if Employees.query.get(id):
             if request.method == 'POST':
-                change_emp(id)
+                name = request.form.get('new_name')
+                department = request.form.get('new_department')
+                salary = request.form.get('new_salary')
+                birth_date = request.form.get('new_birth_date')
+                if name and department and salary and birth_date:
+                    change_emp(id, name, department, salary, birth_date)
                 return redirect('/employees')
-
             return render_template('employees.html', id=id, departments=departments, employees=employees)
-        else:
-            return redirect('/employees')
+        return redirect('/employees')
 
 
 @api.route('/departments/<int:id>/edit', methods=['GET', 'POST'])
@@ -234,8 +241,9 @@ def edit_dnt(id):
         dnt_salary = avg_salaries(departments, employees)
         if Departments.query.get(id):
             if request.method == 'POST':
-                change_dnt(id)
+                department = request.form.get('new_department')
+                if department and not Departments.query.filter_by(department=department):
+                    change_dnt(id, department)
                 return redirect('/departments')
             return render_template('departments.html', id=id, departments=departments, dnt_salary=dnt_salary)
-        else:
-            return redirect('/departments')
+        return redirect('/departments')

@@ -81,15 +81,15 @@ def add_emp(name, department, salary, birth_date):
     return None
 
 
-def add_dnt(department: str):
+def add_dnt(department):
     """
     Function adding new department to the db
     :param department: name of new department
     :return: None
     """
     try:
-        new_dnt = Departments(department=department)
-        db.session.add(new_dnt)
+        dnt = Departments(department=department)
+        db.session.add(dnt)
         db.session.commit()
     except:
         print('Error working with adding department')
@@ -104,30 +104,27 @@ def find_emp(from_date, to_date):
     :return: if no errors sorted employees,
             else all employees
     """
-    try:
-        from_date = datetime.datetime.strptime(from_date, '%Y-%m-%d').date()
-        to_date = datetime.datetime.strptime(to_date, '%Y-%m-%d').date()
-        sorted_employees = []
-        if to_date >= from_date:
-            for emp in Employees.query.all():
-                if from_date <= emp.birth_date <= to_date:
-                    sorted_employees.append(emp)
-            return sorted_employees
-    except:
-        return Employees.query.all()
+    sorted_employees = []
+    for emp in Employees.query.all():
+        if from_date <= emp.birth_date <= to_date:
+            sorted_employees.append(emp)
+    return sorted_employees
 
 
-def change_emp(id):
+
+def change_emp(id, name, department, salary, birth_date):
     """
     Function changing employee`s information
-    :param id: id of the employee a user wants to change
+    :param id: id of th employee
+    :param name: new employee`s name
+    :param department: new employee`s department
+    :param salary: new employee`s salary
+    :param birth_date: new employee`s birth_date
     :return: None
     """
     try:
-        name = request.form['new_name']
-        department = request.form['new_department']
-        salary = int(request.form['new_salary'])
-        birth_date = datetime.datetime.strptime(request.form['new_birth_date'], '%Y-%m-%d')
+        salary = int(salary)
+        birth_date = datetime.datetime.strptime(birth_date, '%Y-%m-%d')
         if salary >= 0:
             emp = Employees.query.get(id)
             emp.name = name
@@ -141,27 +138,23 @@ def change_emp(id):
     return None
 
 
-def change_user(id):
+def change_user(id, login, password):
     """
     Function changing users information
     :param id: id of the user an admin wants to change
     :return: None
     """
     try:
-        login = request.form['new_login']
-        password = request.form['new_password']
-
         user = User.query.get(id)
         user.login = login
         user.password = password
-
         db.session.commit()
     except:
         print('Error working with changing user')
     return None
 
 
-def change_dnt(id):
+def change_dnt(id, department):
     """
     Function changing information of department
 
@@ -171,21 +164,12 @@ def change_dnt(id):
     try:
         employees = Employees.query.all()
         dnt = Departments.query.get(id)
-        new_name_dnt = request.form['new_department']
-        is_already_exists = False
-        if new_name_dnt:
-            for d in Departments.query.all():
-                if d.department == new_name_dnt and d.id != dnt.id:
-                    is_already_exists = True
-                    break
-            if not is_already_exists:
 
-                for emp in employees:
-                    if emp.department == dnt.department:
-                        emp.department = new_name_dnt
-                dnt.department = new_name_dnt
-
-                db.session.commit()
+        for emp in employees:
+            if emp.department == dnt.department:
+                emp.department = department
+        dnt.department = department
+        db.session.commit()
     except:
         print('Error working with changing department')
     return None

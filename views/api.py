@@ -98,7 +98,7 @@ def departments_page():
     if session.get('user') == ADMIN:
         if request.method == 'POST':
             department = request.form.get('department')
-            if department and not Departments.query.filter_by(department=department):
+            if department and not Departments.query.filter_by(department=department).first():
                 add_dnt(department)
             return redirect('/departments')
         return render_template('departments.html', departments=departments, dnt_salary=dnt_salary)
@@ -196,7 +196,8 @@ def edit_user(id):
             if request.method == 'POST':
                 login = request.form.get('new_login')
                 password = request.form.get('new_password')
-                if login and password:
+                if login and password and \
+                        (not User.query.filter_by(login=login).first() or User.query.get(id).login == login):
                     change_user(id, login, password)
                 return redirect('/users')
             return render_template('users_for_admin.html', id=id, users=users)
@@ -242,7 +243,9 @@ def edit_dnt(id):
         if Departments.query.get(id):
             if request.method == 'POST':
                 department = request.form.get('new_department')
-                if department and not Departments.query.filter_by(department=department):
+                if department and \
+                        (not Departments.query.filter_by(department=department).first() or
+                         Departments.query.get(id).department == department):
                     change_dnt(id, department)
                 return redirect('/departments')
             return render_template('departments.html', id=id, departments=departments, dnt_salary=dnt_salary)

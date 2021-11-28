@@ -42,14 +42,16 @@ class UserAPI(Resource):
                 id = request.form.get('id')
                 func = request.form.get('func')
                 if func == 'add' and user_login and user_password:
-                    if not user_login in User.query.filter_by(login=user_login):
+                    if not User.query.filter_by(login=user_login).first():
                         add_user(user_login, user_password)
                         return {'message': 'ADD_SUCCESS'}
-                    abort(404, error='DNT_NAME_ALREADY_USED')
+                    abort(404, error='LOGIN_ALREADY_USED')
                 elif func == 'edit' and user_login \
                         and user_password and id and User.query.get(id):
-                    change_user(id, user_login, user_password)
-                    return {'message': 'EDIT_SUCCESS'}
+                    if not User.query.filter_by(login=user_login).first() or User.query.get(id).login == user_login:
+                        change_user(id, user_login, user_password)
+                        return {'message': 'EDIT_SUCCESS'}
+                    abort(404, error='LOGIN_ALREADY_USED')
                 elif func == 'del' and id:
                     if id != 1:
                         del_user(id)
@@ -86,13 +88,16 @@ class DepartmentsAPI(Resource):
                 id = request.form.get('id')
                 func = request.form.get('func')
                 if func == 'add' and department:
-                    if not department in Departments.query.filter_by(department=department):
+                    if not Departments.query.filter_by(department=department).first():
                         add_dnt(department)
                         return {'message': 'ADD_SUCCESS'}
                     abort(406, error='DNT_NAME_ALREADY_USED')
                 elif func == 'edit' and department and id and Departments.query.get(id):
-                    change_dnt(id, department)
-                    return {'message': 'EDIT_SUCCESS'}
+                    if not Departments.query.filter_by(department=department).first() or\
+                            Departments.query.get(id).department == department:
+                        change_dnt(id, department)
+                        return {'message': 'EDIT_SUCCESS'}
+                    abort(406, error='DNT_NAME_ALREADY_USED')
                 elif func == 'del' and id:
                     del_dnt(id)
                     return {'message': 'DEL_SUCCESS'}
@@ -147,16 +152,19 @@ class EmployeesAPI(Resource):
                         return employees_dict
                     abort(406, error='DATES_INCORRECT')
                 if user.id == 1:
-                    if func == 'add' and department:
-                        if not department in Departments.query.filter_by(department=department):
-                            add_dnt(department)
+                    if func == 'add' and name and department and salary and birth_date:
+                        if Departments.query.filter_by(department=department).first():
+                            add_emp(name, department, salary, birth_date)
                             return {'message': 'ADD_SUCCESS'}
-                        abort(406, error='DNT_NAME_ALREADY_USED')
-                    elif func == 'edit' and department and id and Departments.query.get(id):
-                        change_dnt(id, department)
-                        return {'message': 'EDIT_SUCCESS'}
+                        abort(406, error='NO_SUCH_DEPARTMENT_EXISTS')
+                    elif func == 'edit' and name and department and salary and birth_date and\
+                            id and Employees.query.get(id):
+                        if Departments.query.filter_by(department=department).first():
+                            change_emp(id, name, department, salary, birth_date)
+                            return {'message': 'EDIT_SUCCESS'}
+                        abort(406, error='NO_SUCH_DEPARTMENT_EXISTS')
                     elif func == 'del' and id:
-                        del_dnt(id)
+                        del_emp(id)
                         return {'message': 'DEL_SUCCESS'}
                     abort(406, error='ARGUMENTS_INCORRECT')
         abort(401, error='CREDENTIALS_INCORRECT')

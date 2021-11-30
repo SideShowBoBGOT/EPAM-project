@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Departments
+{% endblock %}
+{% block body %}
+<div class="container">
+        <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+          <ul class="nav nav-pills">
+              <li class="nav-item"><a href="/users" class="nav-link">Users</a></li>
+            <li class="nav-item"><a href="/departments" class="nav-link ">Departments</a></li>
+            <li class="nav-item"><a href="/employees" class="nav-link">Employees</a></li>
+              <li class="nav-item"><a href="/api_list" class="nav-link active">API</a></li>
+          </ul>
+            <div class="col-md-3 text-end">
+                <a href="/logout">
+                    <button type="button" class="btn btn-danger">Logout</button>
+                </a>
+              </div>
+        </header>
+</div>
+
+{% endblock %}

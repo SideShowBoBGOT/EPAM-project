@@ -2,7 +2,7 @@ import os
 import sys
 import datetime
 from flask_login import login_user, login_required, logout_user
-
+import re
 sys.path.append(os.path.abspath(os.path.join('..')))
 
 from models.employees import Employees
@@ -127,10 +127,16 @@ def employees_page():
             from_date = request.form.get('From')
             to_date = request.form.get('To')
 
-            if name and department and salary and birth_date:
+            if name and department and salary and birth_date \
+                    and re.match(r'[0-9]+|([0-9]+.[0-9]+)', salary)\
+                    and re.match(r'[0-9]{4}(-[0-9]{2}){2}', birth_date):
+                salary = float(salary)
+                birth_date = datetime.datetime.strptime(birth_date, '%Y-%m-%d').date()
                 add_emp(name, department, salary, birth_date)
                 return redirect('/employees')
-            elif from_date and to_date:
+            elif from_date and to_date \
+                    and re.match(r'[0-9]{4}(-[0-9]{2}){2}', from_date)\
+                    and re.match(r'[0-9]{4}(-[0-9]{2}){2}', to_date):
                 from_date = datetime.datetime.strptime(from_date, '%Y-%m-%d').date()
                 to_date = datetime.datetime.strptime(to_date, '%Y-%m-%d').date()
                 if to_date >= from_date:
@@ -140,6 +146,15 @@ def employees_page():
         if 'From' in request.form.keys() and 'To' in request.form.keys():
             departments, employees = find_emp(departments, employees)
     return render_template('employees_for_users.html', employees=employees, departments=departments)
+
+@api.route('/api_list')
+@login_required
+def api_page():
+    """
+    Function returning API page
+    :return: template of API page
+    """
+    return render_template('API.html')
 
 
 @api.route('/users/<int:id>/del')
@@ -221,7 +236,11 @@ def edit_emp(id):
                 department = request.form.get('new_department')
                 salary = request.form.get('new_salary')
                 birth_date = request.form.get('new_birth_date')
-                if name and department and salary and birth_date:
+                if name and department and salary and birth_date \
+                        and re.match(r'[0-9]+|([0-9]+.[0-9]+)', salary) \
+                        and re.match(r'[0-9]{4}(-[0-9]{2}){2}', birth_date):
+                    salary = float(salary)
+                    birth_date = datetime.datetime.strptime(birth_date, '%Y-%m-%d').date()
                     change_emp(id, name, department, salary, birth_date)
                 return redirect('/employees')
             return render_template('employees.html', id=id, departments=departments, employees=employees)

@@ -14,6 +14,8 @@ from models.users import User
 from werkzeug.security import generate_password_hash
 
 
+
+
 def avg_salaries(departments, employees):
     """
     Function calculating average salary of every department
@@ -69,13 +71,10 @@ def add_emp(name, department, salary, birth_date):
    :return: None
     """
     try:
-        salary = int(salary)
-        birth_date = datetime.datetime.strptime(birth_date, '%Y-%m-%d')
-        if salary >= 0:
-            emp = Employees(name=name, department=department, birth_date=birth_date, salary=salary)
+        emp = Employees(name=name, department=department, birth_date=birth_date, salary=salary)
 
-            db.session.add(emp)
-            db.session.commit()
+        db.session.add(emp)
+        db.session.commit()
     except:
         print('Error working with adding employee')
     return None
@@ -123,16 +122,13 @@ def change_emp(id, name, department, salary, birth_date):
     :return: None
     """
     try:
-        salary = int(salary)
-        birth_date = datetime.datetime.strptime(birth_date, '%Y-%m-%d')
-        if salary >= 0:
-            emp = Employees.query.get(id)
-            emp.name = name
-            emp.department = department
-            emp.salary = salary
-            emp.birth_date = birth_date
+        emp = Employees.query.get(id)
+        emp.name = name
+        emp.department = department
+        emp.salary = salary
+        emp.birth_date = birth_date
 
-            db.session.commit()
+        db.session.commit()
     except:
         print('Error working with changing employee')
     return None

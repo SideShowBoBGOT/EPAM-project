@@ -12,7 +12,7 @@ class Employees(db.Model):
     department = db.Column(db.String(50), nullable=False)
     name = db.Column(db.String(50), nullable=False)
     birth_date = db.Column(db.Date, nullable=False)
-    salary = db.Column(db.Integer, nullable=False)
+    salary = db.Column(db.Float, nullable=False)
 
     def __repr__(self):
         return '<Article %r>' % self.id

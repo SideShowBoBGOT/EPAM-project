@@ -1,10 +1,10 @@
-from flask import Flask, request
 from flask_restful import Resource, abort, reqparse
 import os
 import sys
 
 sys.path.append(os.path.abspath(os.path.join('..')))
 
+from .common_funcs import check_empty_strings
 from models.users import User
 from service import add_user, del_user, change_user
 
@@ -29,6 +29,9 @@ del_args = reqparse.RequestParser()
 del_args.add_argument("login", type=str, help="User`s login", required=True)
 del_args.add_argument("password", type=str, help="User`s password", required=True)
 del_args.add_argument("id", type=int, help="Id of the user to delete", required=True)
+
+
+
 
 class UserAPIget(Resource):
     def post(self):
@@ -55,19 +58,22 @@ class UserAPIadd(Resource):
         password = args['password']
         user = User.query.filter_by(login=login).first()
         # admin`s id is 1
+
         if user and user.id == 1 and user.password == password:
             new_login = args['new_login']
             new_password = args['new_password']
-            if not User.query.filter_by(login=new_login).first():
-                add_user(new_login, new_password)
-                return {'message': 'ADD_SUCCESS'}
-            abort(404, error='LOGIN_ALREADY_USED')
+            if check_empty_strings(new_login, new_password):
+                if not User.query.filter_by(login=new_login).first():
+                    add_user(new_login, new_password)
+                    return {'message': 'ADD_SUCCESS'}
+                abort(404, error='LOGIN_ALREADY_USED')
+            abort(401, error='VALUES_INCORRECT')
         abort(401, error='CREDENTIALS_INCORRECT')
 
 
 
 class UserAPIedit(Resource):
-    def post(self, login, password):
+    def post(self):
         args = edit_args.parse_args()
         login = args['login']
         password = args['password']
@@ -77,12 +83,14 @@ class UserAPIedit(Resource):
             new_login = args['new_login']
             new_password = args['new_password']
             id = args['id']
-            if User.query.get(id):
-                if not User.query.filter_by(login=new_login).first() or User.query.get(id).login == new_login:
-                    change_user(id, new_login, new_password)
-                    return {'message': 'EDIT_SUCCESS'}
-                abort(404, error='LOGIN_ALREADY_USED')
-            abort(406, error='NO_SUCH_ID')
+            if check_empty_strings(new_login, new_password):
+                if User.query.get(id):
+                    if not User.query.filter_by(login=new_login).first() or User.query.get(id).login == new_login:
+                        change_user(id, new_login, new_password)
+                        return {'message': 'EDIT_SUCCESS'}
+                    abort(404, error='LOGIN_ALREADY_USED')
+                abort(406, error='NO_SUCH_ID')
+            abort(401, error='VALUES_INCORRECT')
         abort(401, error='CREDENTIALS_INCORRECT')
 
 

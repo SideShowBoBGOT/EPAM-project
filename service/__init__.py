@@ -11,7 +11,7 @@ from application import db
 from models.employees import Employees
 from models.departments import Departments
 from models.users import User
-from werkzeug.security import generate_password_hash
+
 
 
 

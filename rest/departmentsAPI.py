@@ -1,10 +1,9 @@
-from flask import Flask, request
 from flask_restful import Resource, abort, reqparse
 import os
 import sys
 
 sys.path.append(os.path.abspath(os.path.join('..')))
-
+from .common_funcs import check_empty_strings
 from models.users import User
 from models.departments import Departments
 from models.employees import Employees
@@ -57,10 +56,12 @@ class DepartmentsAPIadd(Resource):
         user = User.query.filter_by(login=login).first()
         if user and user.password == password and user.id == 1:
             department = args['department']
-            if not Departments.query.filter_by(department=department).first():
-                add_dnt(department)
-                return {'message': 'ADD_SUCCESS'}
-            abort(406, error='DNT_NAME_ALREADY_USED')
+            if check_empty_strings(department):
+                if not Departments.query.filter_by(department=department).first():
+                    add_dnt(department)
+                    return {'message': 'ADD_SUCCESS'}
+                abort(406, error='DNT_NAME_ALREADY_USED')
+            abort(401, error='ARGUMENTS_INCORRECT')
         abort(401, error='CREDENTIALS_INCORRECT')
 
 
@@ -73,13 +74,15 @@ class DepartmentsAPIedit(Resource):
         if user and user.password == password and user.id == 1:
             department = args['department']
             id = args['id']
-            if Departments.query.get(id):
-                if not Departments.query.filter_by(department=department).first() or Departments.query.get(
-                        id).department == department:
-                    change_dnt(id, department)
-                    return {'message': 'EDIT_SUCCESS'}
-                abort(406, error='DNT_NAME_ALREADY_USED')
-            abort(406, error='NO_SUCH_ID')
+            if check_empty_strings(department):
+                if Departments.query.get(id):
+                    if not Departments.query.filter_by(department=department).first() or Departments.query.get(
+                            id).department == department:
+                        change_dnt(id, department)
+                        return {'message': 'EDIT_SUCCESS'}
+                    abort(406, error='DNT_NAME_ALREADY_USED')
+                abort(406, error='NO_SUCH_ID')
+            abort(401, error='ARGUMENTS_INCORRECT')
         abort(401, error='CREDENTIALS_INCORRECT')
 
 

@@ -1,11 +1,11 @@
-from flask import Flask, request
 from flask_restful import Resource, abort, reqparse
 import os
 import sys
 import datetime
 import re
-sys.path.append(os.path.abspath(os.path.join('..')))
 
+sys.path.append(os.path.abspath(os.path.join('..')))
+from .common_funcs import check_empty_strings
 from models.users import User
 from models.departments import Departments
 from models.employees import Employees
@@ -77,10 +77,14 @@ class EmployeesAPIadd(Resource):
             salary = args['salary']
             birth_date = args['birth_date']
             if Departments.query.filter_by(department=department).first():
-                if salary > 0 and re.match(r'[0-9]{4}(-[0-9]{2}){2}', birth_date):
-                    add_emp(name, department, salary, birth_date)
-                    return {'message': 'ADD_SUCCESS'}
-                abort('ARGUMENTS_INCORRECT')
+                try:
+                    if check_empty_strings(name) and salary > 0:
+                        birth_date = datetime.datetime.strptime(birth_date, '%Y-%m-%d').date()
+                        add_emp(name, department, salary, birth_date)
+                        return {'message': 'ADD_SUCCESS'}
+                    raise ValueError
+                except ValueError:
+                    abort(406, error='ARGUMENTS_INCORRECT')
             abort(406, error='NO_SUCH_DEPARTMENT_EXISTS')
         abort(401, error='CREDENTIALS_INCORRECT')
 
@@ -94,8 +98,7 @@ class EmployeesAPIfind(Resource):
         if user and user.password == password:
             from_date = args['from_date']
             to_date = args['to_date']
-            if re.match(r'[0-9]{4}(-[0-9]{2}){2}', from_date)\
-                    and re.match(r'[0-9]{4}(-[0-9]{2}){2}', to_date):
+            try:
                 from_date = datetime.datetime.strptime(from_date, '%Y-%m-%d').date()
                 to_date = datetime.datetime.strptime(to_date, '%Y-%m-%d').date()
                 if to_date >= from_date:
@@ -107,7 +110,9 @@ class EmployeesAPIfind(Resource):
                                                       'salary': emp.salary,
                                                       'birth_date': str(emp.birth_date)}
                     return employees_dict
-            abort(406, error='ARGUMENTS_INCORRECT')
+                raise ValueError
+            except ValueError:
+                abort(406, error='ARGUMENTS_INCORRECT')
         abort(401, error='CREDENTIALS_INCORRECT')
 
 
@@ -125,22 +130,26 @@ class EmployeesAPIedit(Resource):
             id = args['id']
             if Employees.query.get(id):
                 if Departments.query.filter_by(department=department).first():
-                    if salary > 0 and re.match(r'[0-9]{4}(-[0-9]{2}){2}', birth_date):
-                        change_emp(id, name, department, salary, birth_date)
-                        return {'message': 'EDIT_SUCCESS'}
-                    abort(406, error='ARGUMENTS_INCORRECT')
+                    try:
+                        if check_empty_strings(name) and salary > 0:
+                            birth_date = datetime.datetime.strptime(birth_date, '%Y-%m-%d').date()
+                            change_emp(id, name, department, salary, birth_date)
+                            return {'message': 'EDIT_SUCCESS'}
+                        raise ValueError
+                    except ValueError:
+                        abort(406, error='ARGUMENTS_INCORRECT')
                 abort(406, error='NO_SUCH_DEPARTMENT_EXISTS')
             abort(406, error='NO_SUCH_ID')
         abort(401, error='CREDENTIALS_INCORRECT')
 
 
 class EmployeesAPIdel(Resource):
-    def post(self, login, password):
+    def post(self):
         args = del_args.parse_args()
         login = args['login']
         password = args['password']
         user = User.query.filter_by(login=login).first()
-        if user and user.password == password:
+        if user and user.password == password and user.id == 1:
             id = args['id']
             if Employees.query.get(id):
                 del_emp(id)

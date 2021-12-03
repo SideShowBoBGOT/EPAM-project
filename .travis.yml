@@ -2,8 +2,13 @@ language: python
 python:
   - 3.6.7
 script:
-  - python -m pytest -v tests/unittests.py
   - pip install -r requirements.txt
+  - python -m pytest -v tests/views_Login_unittests.py
+  - python -m pytest -v tests/views_Users_unittests.py
+  - python -m pytest -v tests/views_Employees_unittests.py
+  - python -m pytest -v tests/views_Departments_unittests.py
+  - python -m pytest -v tests/rest_Users_unittest.py
+
 notifications:
   email:
     recipients:

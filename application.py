@@ -17,7 +17,7 @@ def create_app():
     login_manager.init_app(app)
     login_manager.login_view = "api.login_page"
     # db.create_all()
-    from views import api
+    from views.api import api
     app.register_blueprint(api)
     from rest import r_api
     r_api.init_app(app)

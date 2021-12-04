@@ -1,12 +1,9 @@
-import datetime
 import os
 import sys
 
-from flask import request
-from flask_login import login_user
-
 sys.path.append(os.path.abspath(os.path.join('..')))
 
+from f_logger import logger
 from application import db
 from models.employees import Employees
 from models.departments import Departments
@@ -57,7 +54,7 @@ def add_user(login, password):
         db.session.add(user)
         db.session.commit()
     except:
-        print('Error working with adding user')
+        logger.warning('DB can`t add user')
     return None
 
 
@@ -72,11 +69,10 @@ def add_emp(name, department, salary, birth_date):
     """
     try:
         emp = Employees(name=name, department=department, birth_date=birth_date, salary=salary)
-
         db.session.add(emp)
         db.session.commit()
     except:
-        print('Error working with adding employee')
+        logger.warning('DB can`t add employee')
     return None
 
 
@@ -91,7 +87,7 @@ def add_dnt(department):
         db.session.add(dnt)
         db.session.commit()
     except:
-        print('Error working with adding department')
+        logger.warning('DB can`t add department')
     return None
 
 
@@ -130,7 +126,7 @@ def change_emp(id, name, department, salary, birth_date):
 
         db.session.commit()
     except:
-        print('Error working with changing employee')
+        logger.warning('DB can`t change employee`s data')
     return None
 
 
@@ -146,7 +142,7 @@ def change_user(id, login, password):
         user.password = password
         db.session.commit()
     except:
-        print('Error working with changing user')
+        logger.warning('DB can`t change user`s data')
     return None
 
 
@@ -167,7 +163,7 @@ def change_dnt(id, department):
         dnt.department = department
         db.session.commit()
     except:
-        print('Error working with changing department')
+        logger.warning('DB can`t change department data')
     return None
 
 
@@ -182,7 +178,7 @@ def del_user(id):
         db.session.delete(user)
         db.session.commit()
     except:
-        print('Error working with deleting user')
+        logger.warning('DB can`t delete user')
     return None
 
 
@@ -201,7 +197,7 @@ def del_dnt(id):
                 db.session.delete(emp)
         db.session.commit()
     except:
-        print('Error working with deleting department')
+        logger.warning('DB can`t delete department')
     return None
 
 
@@ -216,5 +212,5 @@ def del_emp(id):
         db.session.delete(emp)
         db.session.commit()
     except:
-        print('Error working with deleting employee')
+        logger.warning('DB can`t delete employee')
     return None

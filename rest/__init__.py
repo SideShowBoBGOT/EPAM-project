@@ -1,7 +1,7 @@
 from flask_restful import Api
-from .userAPI import UserAPIget, UserAPIadd, UserAPIedit, UserAPIdel
-from .departmentsAPI import DepartmentsAPIget, DepartmentsAPIadd, DepartmentsAPIedit, DepartmentsAPIdel
-from .employeesAPI import  EmployeesAPIget, EmployeesAPIadd, EmployeesAPIfind, EmployeesAPIedit, EmployeesAPIdel
+from .rest_users import UserAPIget, UserAPIadd, UserAPIedit, UserAPIdel
+from .rest_departments import DepartmentsAPIget, DepartmentsAPIadd, DepartmentsAPIedit, DepartmentsAPIdel
+from .rest_employees import  EmployeesAPIget, EmployeesAPIadd, EmployeesAPIfind, EmployeesAPIedit, EmployeesAPIdel
 
 r_api = Api()
 

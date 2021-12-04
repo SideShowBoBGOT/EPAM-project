@@ -2,7 +2,7 @@ from flask_restful import Resource, abort, reqparse
 import os
 import sys
 import datetime
-import re
+
 
 sys.path.append(os.path.abspath(os.path.join('..')))
 from .common_funcs import check_empty_strings

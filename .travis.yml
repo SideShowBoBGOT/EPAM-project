@@ -3,11 +3,13 @@ python:
   - 3.6.7
 script:
   - pip install -r requirements.txt
-  - python -m pytest -v tests/views_Login_unittests.py
-  - python -m pytest -v tests/views_Users_unittests.py
-  - python -m pytest -v tests/views_Employees_unittests.py
-  - python -m pytest -v tests/views_Departments_unittests.py
-  - python -m pytest -v tests/rest_Users_unittest.py
+  - python -m pytest -v tests/views_login_unittests.py
+  - python -m pytest -v tests/views_users_unittests.py
+  - python -m pytest -v tests/views_employees_unittests.py
+  - python -m pytest -v tests/views_departments_unittests.py
+  - python -m pytest -v tests/rest_users_unittest.py
+  - python -m pytest -v tests/rest_employees_unittests.py
+  - python -m pytest -v tests/rest_departments_unittests.py
 
 notifications:
   email:

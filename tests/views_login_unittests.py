@@ -31,18 +31,7 @@ class FlaskTestCases(unittest.TestCase):
         response = tester.get('/employees', content_type='html/text')
         self.assertTrue(b'Add employee' in response.data)
 
-    # Ensure the user page behaves correctly adding given correct credentials of user
-    def test_user_page_add(self):
-        tester = app.test_client(self)
-        response = tester.post('/', data=dict(login=ADMIN_LOGIN, password=ADMIN_PASSWORD),
-                               follow_redirects=True)
-        response = tester.get('/users', content_type='html/text')
-        new_user_login = 'mechozord'
-        new_user_password = 'wquifwbgo[qhpwbqiub221||||'
-        response = tester.post('/users', data=dict(login=new_user_login, password=new_user_password),
-                               follow_redirects=True)
-        self.assertTrue(b'mechozord' in response.data)
-        self.assertTrue(b'wquifwbgo[qhpwbqiub221||||' in response.data)
+
 
 if __name__ == '__main__':
     unittest.main()

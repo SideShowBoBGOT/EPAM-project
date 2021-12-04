@@ -1,3 +1,12 @@
+"""
+Module contains all functions working on users page.
+
+Functions:
+    users_page()
+    edit_user(id)
+    delete_user(id)
+    check_session()
+"""
 import os
 import sys
 from flask_login import login_user, login_required
@@ -78,6 +87,11 @@ def delete_user(id):
 
 @api_users.before_request
 def check_session():
+    """
+    Function logging in user to the page if session has been
+    already created. Else redirects to the main page.
+    :return: None or redirect
+    """
     users = User.query.filter_by(login=session.get('user')).all()
     if users:
         login_user(users[0])

@@ -1,10 +1,17 @@
+"""
+Module contains all functions working on employees page.
+
+Functions:
+    employees_page()
+    edit_emp(id)
+    delete_emp(id)
+    check_session()
+"""
 import os
 import sys
 import datetime
 from flask_login import login_user, login_required
-import logging
 
-from flask import current_app
 
 sys.path.append(os.path.abspath(os.path.join('..')))
 
@@ -24,8 +31,8 @@ api_employees = Blueprint('api_employees', __name__)
 def employees_page():
     """
     Function working on employees page:
-        1) adding new employees session is used by admin
-        2) Finding employees by dates of birth
+        1) adding new employees session is used by admin;
+        2) Finding employees by dates of birth;
     :return: the template of the employees page
     """
     departments = Departments.query.all()
@@ -41,8 +48,7 @@ def employees_page():
                     employees = find_emp(from_date, to_date)
                 logger.info(f'Found employees: from_date: "{from_date}"\tto_date: "{to_date}"')
             except:
-                pass
-            logger.info(f'Failed finding employees: from_date: "{from_date}"\tto_date: "{to_date}"')
+                logger.info(f'Failed finding employees: from_date: "{from_date}"\tto_date: "{to_date}"')
         elif session.get('user') == ADMIN:
             name = request.form.get('name')
             department = request.form.get('department')
@@ -69,7 +75,7 @@ def employees_page():
 @login_required
 def edit_emp(id):
     """
-    Function editing information about specific employee
+    Function editing information about specific employee.
     :param id: id of the specific employee an admin wants to change information about
     :return: return template of the departments page or redirects to employees page
     """
@@ -103,7 +109,7 @@ def edit_emp(id):
 @login_required
 def delete_emp(id):
     """
-    Function deleting specific employee by its id
+    Function deleting specific employee by its id.
     :param id: id of the specific employee an admin wants to delete
     :return: redirects to the employees page
     """
@@ -115,6 +121,11 @@ def delete_emp(id):
 
 @api_employees.before_request
 def check_session():
+    """
+    Function logging in user to the page if session has been
+    already created. Else redirects to the main page.
+    :return: None or redirect
+    """
     users = User.query.filter_by(login=session.get('user')).all()
     if users:
         login_user(users[0])

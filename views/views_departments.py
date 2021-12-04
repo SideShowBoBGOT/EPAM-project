@@ -1,9 +1,14 @@
+"""
+Module contains all functions working on departments page.
+
+Functions:
+    departments_page()
+    delete_dnt(id)
+    edit_dnt(id)
+"""
 import os
 import sys
 from flask_login import login_user, login_required
-import logging
-
-from flask import current_app
 
 
 sys.path.append(os.path.abspath(os.path.join('..')))
@@ -86,6 +91,11 @@ def edit_dnt(id):
 
 @api_departments.before_request
 def check_session():
+    """
+      Function logging in user to the page if session has been
+      already created. Else redirects to the main page.
+      :return: None or redirect
+    """
     users = User.query.filter_by(login=session.get('user')).all()
     if users:
         login_user(users[0])

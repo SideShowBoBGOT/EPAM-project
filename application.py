@@ -1,8 +1,13 @@
+"""
+Module containing factory for app merging it with database, blueprints, REST.
+
+Functions:
+    create_app()
+"""
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 import config
-import logging
 
 
 db = SQLAlchemy()
@@ -10,6 +15,11 @@ login_manager = LoginManager()
 
 
 def create_app():
+    """
+    Function creating app and merging it with db, blueprints
+    and REST.
+    :return: application instance
+    """
     app = Flask(__name__)
     app.config.from_object(config)
     app.app_context().push()

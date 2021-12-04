@@ -1,3 +1,12 @@
+"""
+Module contains all functions working on login page.
+
+Functions:
+    login_page()
+    logout_page()
+    make_session_permanent()
+    redirect_to_sign_in(response)
+"""
 import os
 import sys
 from flask_login import login_user, login_required, logout_user
@@ -36,6 +45,10 @@ def login_page():
 @api_login.route('/logout')
 @login_required
 def logout_page():
+    """
+    Function logging user out
+    :return: redirect  to the main page
+    """
     logout_user()
     logger.info('User logged out')
     return redirect('/')
@@ -43,11 +56,21 @@ def logout_page():
 
 @api_login.before_request
 def make_session_permanent():
+    """
+    Function making sessions permanent
+    :return: None
+    """
     session.permanent = False
 
 
 @api_login.after_request
 def redirect_to_sign_in(response):
+    """
+    Function redirecting user to the main page if not logged in.
+    Else redirects to the next page.
+    :param response: the next page user wants to visit
+    :return: redirect to the main page or response
+    """
     if response.status_code == 401:
         return redirect('/')
     return response

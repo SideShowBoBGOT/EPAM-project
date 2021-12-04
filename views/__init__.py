@@ -1,3 +1,13 @@
+"""
+Module contains all views blueprints.
+
+Blueprints:
+    api
+    api_departments
+    api_employees
+    api_login
+    api_users
+"""
 import os
 import sys
 

@@ -1,10 +1,14 @@
+"""
+Module contains all functions working on api page.
+
+Functions:
+    api_page()
+    check_session()
+"""
 import os
 import sys
 from flask import render_template, redirect, Blueprint, session
 from flask_login import login_user, login_required
-import logging
-
-from flask import current_app
 
 
 sys.path.append(os.path.abspath(os.path.join('..')))
@@ -24,6 +28,11 @@ def api_page():
 
 @api.before_request
 def check_session():
+    """
+    Function logging in user to the page if session has been
+    already created. Else redirects to the main page.
+    :return: None or redirect
+    """
     users = User.query.filter_by(login=session.get('user')).all()
     if users:
         login_user(users[0])

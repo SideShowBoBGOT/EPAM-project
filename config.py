@@ -1,3 +1,6 @@
+"""
+Module contains configs for SQLAlchemy db.
+"""
 import datetime
 SQLALCHEMY_DATABASE_URI = 'sqlite:///sql/company.db'
 SQLALCHEMY_TRACK_MODIFICATIONS = False

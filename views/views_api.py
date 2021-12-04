@@ -1,15 +1,13 @@
 import os
 import sys
-import datetime
-from flask_login import login_user, login_required, logout_user
+from flask import render_template, redirect, Blueprint, session
+from flask_login import login_user, login_required
 import logging
 
 from flask import current_app
 
 
 sys.path.append(os.path.abspath(os.path.join('..')))
-
-from flask import Flask, render_template, request, redirect, Blueprint, url_for, session
 from models.users import User
 ADMIN = User.query.get(1).login
 

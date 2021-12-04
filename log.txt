@@ -1,0 +1,40 @@
+
+2021-12-04 17:11:28,822 : INFO : views_login : User logged out
+2021-12-04 17:11:31,435 : INFO : views_login : Authorized: login: "admin"	password: "qwerty"
+2021-12-04 17:13:57,034 : INFO : views_login : User logged out
+2021-12-04 17:19:13,162 : INFO : views_login : Authorized: login: "admin"	password: "qwerty"
+2021-12-04 17:19:18,239 : INFO : views_departments : Added department: "qqqqq"
+2021-12-04 17:19:30,809 : INFO : views_departments : Deleted department: id: "7"
+2021-12-04 17:19:31,905 : INFO : views_departments : Deleted department: id: "6"
+2021-12-04 19:27:22,358 : INFO : views_login : Authorized: login: "admin"	password: "qwerty"
+2021-12-04 19:27:33,866 : INFO : views_users : Deleted user: id: "5"
+2021-12-04 19:27:39,671 : INFO : views_users : Added user: login: "s"	password: "s"
+2021-12-04 19:27:44,757 : INFO : views_users : Deleted user: id: "5"
+2021-12-04 19:27:51,723 : INFO : views_departments : Added department: "ssd"
+2021-12-04 19:27:55,706 : INFO : views_departments : Deleted department: id: "7"
+2021-12-04 19:27:59,806 : INFO : views_departments : Deleted department: id: "6"
+2021-12-04 19:28:25,651 : INFO : views_employees : Added employee: name: "ds"	department: "Python"	salary: "223.0"	birthdate: "2021-12-08"
+2021-12-04 19:28:40,664 : INFO : views_employees : Deleted employee: id: "18"
+2021-12-04 19:28:41,489 : INFO : views_employees : Deleted employee: id: "17"
+2021-12-04 19:28:42,286 : INFO : views_employees : Deleted employee: id: "16"
+2021-12-04 19:34:18,121 : INFO : views_login : User logged out
+2021-12-04 19:34:25,853 : INFO : views_login : Authorized: login: "admin"	password: "qwerty"
+2021-12-04 19:34:45,312 : INFO : views_departments : Failed editing department: id: "5"	department: "Lisp"
+2021-12-04 19:35:04,104 : INFO : views_users : Failed editing user: id: "4" login: "mix"	password: "1234"
+2021-12-04 19:35:15,617 : INFO : views_employees : Failed finding employees: from_date: "2021-12-23"	to_date: "2021-12-02"
+2021-12-04 19:44:00,659 : INFO : views_login : User logged out
+2021-12-04 19:49:17,291 : INFO : views_login : Authorized: login: "admin"	password: "qwerty"
+2021-12-04 19:49:30,308 : INFO : views_employees : Failed adding employee: name: "Mike Langelo"	department: "JavaScript"	salary: "31000"	birthdate: "2021-12-08"
+2021-12-04 19:49:30,308 : INFO : views_employees : Failed finding employees: from_date: "None"	to_date: "None"
+2021-12-04 20:00:19,231 : INFO : views_login : User logged out
+2021-12-04 20:00:20,271 : INFO : views_login : Authorized: login: "admin"	password: "qwerty"
+2021-12-04 20:00:26,494 : INFO : views_login : User logged out
+2021-12-04 20:01:18,138 : INFO : views_login : Authorized: login: "admin"	password: "qwerty"
+2021-12-04 20:02:51,733 : INFO : views_employees : Failed adding employee: name: "dsfsd"	department: "Delphi"	salary: "2112"	birthdate: "2021-12-09"
+2021-12-04 20:03:11,660 : INFO : views_employees : Found employees: from_date: "1983-02-09"	to_date: "2021-12-17"
+2021-12-04 20:04:12,612 : INFO : views_employees : Found employees: from_date: "1990-07-11"	to_date: "2021-11-30"
+2021-12-04 20:04:12,612 : INFO : views_employees : Failed finding employees: from_date: "1990-07-11"	to_date: "2021-11-30"
+2021-12-04 20:04:23,284 : INFO : views_employees : Failed adding employee: name: "Mary Shrader"	department: "Lisp"	salary: "655656"	birthdate: "2021-12-15"
+2021-12-04 20:09:45,485 : INFO : views_employees : Added employee: name: "sdfsd"	department: "Python"	salary: "1221.0"	birthdate: "2021-12-15"
+2021-12-04 20:09:51,399 : INFO : views_employees : Deleted employee: id: "14"
+2021-12-04 20:11:33,478 : INFO : views_employees : Failed adding employee: name: ""	department: "None"	salary: ""	birthdate: ""

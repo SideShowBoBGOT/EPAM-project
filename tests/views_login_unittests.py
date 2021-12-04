@@ -32,6 +32,5 @@ class FlaskTestCases(unittest.TestCase):
         self.assertTrue(b'Add employee' in response.data)
 
 
-
 if __name__ == '__main__':
     unittest.main()

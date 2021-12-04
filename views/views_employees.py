@@ -1,22 +1,23 @@
 import os
 import sys
 import datetime
-from flask_login import login_user, login_required, logout_user
+from flask_login import login_user, login_required
 import logging
 
 from flask import current_app
-
 
 sys.path.append(os.path.abspath(os.path.join('..')))
 
 from models.employees import Employees
 from models.departments import Departments
 from models.users import User
-from flask import Flask, render_template, request, redirect, Blueprint, url_for, session
+from flask import render_template, request, redirect, Blueprint, session
 from service import add_emp, find_emp, change_emp, del_emp
+from f_logger import logger
 
 ADMIN = User.query.get(1).login
 api_employees = Blueprint('api_employees', __name__)
+
 
 @api_employees.route('/employees', methods=['POST', 'GET'])
 @login_required
@@ -27,42 +28,42 @@ def employees_page():
         2) Finding employees by dates of birth
     :return: the template of the employees page
     """
-
     departments = Departments.query.all()
     employees = Employees.query.all()
-    if session.get('user') == ADMIN:
-        if request.method == 'POST':
+    if request.method == 'POST':
+        from_date = request.form.get('From')
+        to_date = request.form.get('To')
+        if from_date and to_date:
+            try:
+                from_date = datetime.datetime.strptime(from_date, '%Y-%m-%d').date()
+                to_date = datetime.datetime.strptime(to_date, '%Y-%m-%d').date()
+                if to_date >= from_date:
+                    employees = find_emp(from_date, to_date)
+                logger.info(f'Found employees: from_date: "{from_date}"\tto_date: "{to_date}"')
+            except:
+                pass
+            logger.info(f'Failed finding employees: from_date: "{from_date}"\tto_date: "{to_date}"')
+        elif session.get('user') == ADMIN:
             name = request.form.get('name')
             department = request.form.get('department')
             salary = request.form.get('salary')
             birth_date = request.form.get('birth_date')
-
-            from_date = request.form.get('From')
-            to_date = request.form.get('To')
-
-            if name and department and salary and birth_date:
-                try:
+            try:
+                if name and department and salary and birth_date and float(salary) > 0:
                     salary = float(salary)
-                    if salary<=0:
-                        raise ValueError
                     birth_date = datetime.datetime.strptime(birth_date, '%Y-%m-%d').date()
                     add_emp(name, department, salary, birth_date)
-                except:
-                    pass
-                return redirect('/employees')
-            elif from_date and to_date:
-                try:
-                    from_date = datetime.datetime.strptime(from_date, '%Y-%m-%d').date()
-                    to_date = datetime.datetime.strptime(to_date, '%Y-%m-%d').date()
-                    if to_date >= from_date:
-                        employees = find_emp(from_date, to_date)
-                except:
-                    pass
+                    logger.info(f'Added employee: name: "{name}"\tdepartment: "{department}"'
+                                f'\tsalary: "{salary}"\tbirthdate: "{birth_date}"')
+                    return redirect('/employees')
+                raise ValueError
+            except:
+                logger.info(f'Failed adding employee: name: "{name}"\tdepartment: "{department}"'
+                            f'\tsalary: "{salary}"\tbirthdate: "{birth_date}"')
+    if session.get('user') == ADMIN:
         return render_template('employees.html', employees=employees, departments=departments)
-    if request.method == 'POST':
-        if 'From' in request.form.keys() and 'To' in request.form.keys():
-            departments, employees = find_emp(departments, employees)
     return render_template('employees_for_users.html', employees=employees, departments=departments)
+
 
 @api_employees.route('/employees/<int:id>/edit', methods=['GET', 'POST'])
 @login_required
@@ -88,11 +89,15 @@ def edit_emp(id):
                             raise ValueError
                         birth_date = datetime.datetime.strptime(birth_date, '%Y-%m-%d').date()
                         change_emp(id, name, department, salary, birth_date)
+                        logger.info(f'Edited employee: id: "{id}"\t name: "{name}"\tdepartment: "{department}"'
+                                    f'\tsalary: "{salary}"\tbirthdate: "{birth_date}"')
                     except:
-                        pass
+                        logger.info(f'Failed editing employee: id: "{id}"\t name: "{name}"\tdepartment: "{department}"'
+                                    f'\tsalary: "{salary}"\tbirthdate: "{birth_date}"')
                 return redirect('/employees')
             return render_template('employees.html', id=id, departments=departments, employees=employees)
         return redirect('/employees')
+
 
 @api_employees.route('/employees/<int:id>/del')
 @login_required
@@ -104,9 +109,8 @@ def delete_emp(id):
     """
     if session.get('user') == ADMIN:
         del_emp(id)
+        logger.info(f'Deleted employee: id: "{id}"')
         return redirect('/employees')
-
-
 
 
 @api_employees.before_request

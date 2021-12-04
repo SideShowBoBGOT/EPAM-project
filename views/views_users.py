@@ -1,18 +1,14 @@
 import os
 import sys
-from flask import current_app, abort
-from flask_login import login_user, login_required, logout_user
-import logging
-
+from flask_login import login_user, login_required
+from flask import render_template, request, redirect, Blueprint, session
 
 sys.path.append(os.path.abspath(os.path.join('..')))
 
 from models.users import User
 from service import add_user, del_user, change_user
-from flask import render_template, request, redirect, Blueprint, url_for, session
-from .views_login import api_login
+from f_logger import logger
 ADMIN = User.query.get(1).login
-
 api_users = Blueprint('api_users', __name__)
 
 @api_users.route('/users', methods=['POST', 'GET'])
@@ -31,12 +27,14 @@ def users_page():
             password = request.form.get('password')
             if login and password and not User.query.filter_by(login=login).first():
                 add_user(login, password)
+                logger.info(f'Added user: login: "{login}"\tpassword: "{password}"')
+            else:
+                logger.info(f'Failed adding user: login: "{login}"\tpassword: "{password}"')
             return redirect('/users')
         return render_template('users_for_admin.html', users=users)
     elif User.query.filter_by(login=session.get('user')).all():
         user = User.query.filter_by(login=session.get('user')).first()
         return render_template('users.html', user=user)
-    abort(401)
 
 @api_users.route('/users/<int:id>/edit', methods=['GET', 'POST'])
 @login_required
@@ -54,7 +52,10 @@ def edit_user(id):
                 password = request.form.get('new_password')
                 if login and password and \
                         (not User.query.filter_by(login=login).first() or User.query.get(id).login == login):
+                    logger.info(f'Edited user: id: "{id}" login: "{login}"\tpassword: "{password}"')
                     change_user(id, login, password)
+                else:
+                    logger.info(f'Failed editing user: id: "{id}" login: "{login}"\tpassword: "{password}"')
                 return redirect('/users')
             return render_template('users_for_admin.html', id=id, users=users)
         return redirect('/users')
@@ -69,7 +70,10 @@ def delete_user(id):
     """
     if session.get('user') == ADMIN:
         if User.query.get(id).login != ADMIN:
+            logger.info(f'Deleted user: id: "{id}"')
             del_user(id)
+        else:
+            logger.info(f'Failed deleting user: id: "{id}"')
         return redirect('/users')
 
 @api_users.before_request

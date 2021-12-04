@@ -187,16 +187,16 @@ class FlaskTestCases(unittest.TestCase):
         from_date = '1970-01-01'
         to_date = '1987-05-06'
 
-        response = tester.post('/api/employees/find',  data=dict(login=ADMIN_LOGIN, password=ADMIN_PASSWORD,
-                                                              from_date=from_date, to_date=to_date),
-                                                    follow_redirects=True)
+        response = tester.post('/api/employees/find', data=dict(login=ADMIN_LOGIN, password=ADMIN_PASSWORD,
+                                                                from_date=from_date, to_date=to_date),
+                               follow_redirects=True)
         selected_employees = json.loads(response.data)
         from_date = datetime.datetime.strptime(from_date, '%Y-%m-%d').date()
         to_date = datetime.datetime.strptime(to_date, '%Y-%m-%d').date()
         for value in selected_employees.values():
             date = datetime.datetime.strptime(value['birth_date'], '%Y-%m-%d').date()
-            self.assertTrue(from_date<=date<=to_date)
-        for i in range(3,0,-1):
+            self.assertTrue(from_date <= date <= to_date)
+        for i in range(3, 0, -1):
             id = Employees.query.all()[-i].id
             response = tester.post('/api/employees/del', data=dict(login=ADMIN_LOGIN, password=ADMIN_PASSWORD, id=id),
                                    follow_redirects=True)
@@ -214,3 +214,6 @@ class FlaskTestCases(unittest.TestCase):
                 response_dict = json.loads(response.data)
                 self.assertTrue('error' in response_dict.keys() or 'message' in response_dict.keys())
 
+
+if __name__ == '__main__':
+    unittest.main()

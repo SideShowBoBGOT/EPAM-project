@@ -8,6 +8,7 @@ from models.users import User
 from models.departments import Departments
 from models.employees import Employees
 from service import avg_salaries, add_dnt, change_dnt, del_dnt
+from f_logger import logger
 
 get_args = reqparse.RequestParser()
 get_args.add_argument("login", type=str, help="User`s login", required=True)
@@ -54,14 +55,15 @@ class DepartmentsAPIadd(Resource):
         login = args['login']
         password = args['password']
         user = User.query.filter_by(login=login).first()
+        department = args['department']
         if user and user.password == password and user.id == 1:
-            department = args['department']
-            if check_empty_strings(department):
-                if not Departments.query.filter_by(department=department).first():
-                    add_dnt(department)
-                    return {'message': 'ADD_SUCCESS'}
-                abort(406, error='DNT_NAME_ALREADY_USED')
+            if check_empty_strings(department) and not Departments.query.filter_by(department=department).first():
+                add_dnt(department)
+                logger.info(f'Added department: "{department}"')
+                return {'message': 'ADD_SUCCESS'}
+            logger.info(f'Failed adding department: "{department}"')
             abort(401, error='ARGUMENTS_INCORRECT')
+        logger.info(f'Failed adding employee: incorrect login: "{login}" or password: "{password}"')
         abort(401, error='CREDENTIALS_INCORRECT')
 
 
@@ -74,15 +76,15 @@ class DepartmentsAPIedit(Resource):
         if user and user.password == password and user.id == 1:
             department = args['department']
             id = args['id']
-            if check_empty_strings(department):
-                if Departments.query.get(id):
-                    if not Departments.query.filter_by(department=department).first() or Departments.query.get(
-                            id).department == department:
-                        change_dnt(id, department)
-                        return {'message': 'EDIT_SUCCESS'}
-                    abort(406, error='DNT_NAME_ALREADY_USED')
-                abort(406, error='NO_SUCH_ID')
+            if check_empty_strings(department) and Departments.query.get(id) \
+                    and (not Departments.query.filter_by(department=department).first()
+                         or Departments.query.get(id).department == department):
+                change_dnt(id, department)
+                logger.info(f'Edited department: id: "{id}"\tdepartment: "{department}"')
+                return {'message': 'EDIT_SUCCESS'}
+            logger.info(f'Failed editing department: id: "{id}"\tdepartment: "{department}"')
             abort(401, error='ARGUMENTS_INCORRECT')
+        logger.info(f'Failed editing employee: incorrect login: "{login}" or password: "{password}"')
         abort(401, error='CREDENTIALS_INCORRECT')
 
 
@@ -94,10 +96,11 @@ class DepartmentsAPIdel(Resource):
         user = User.query.filter_by(login=login).first()
         if user and user.password == password and user.id == 1:
             id = args['id']
-            if Departments.query.get(id):
-                if id != 1:
-                    del_dnt(id)
-                    return {'message': 'DEL_SUCCESS'}
-                abort(406, error='ADMIN_UNDELETABLE')
-            abort(406, error='NO_SUCH_ID')
+            if Departments.query.get(id) and id != 1:
+                del_dnt(id)
+                logger.info(f'Deleted department: id: "{id}"')
+                return {'message': 'DEL_SUCCESS'}
+            logger.info(f'Failed deleting department: id: "{id}"')
+            abort(406, error='ARGUMENTS_INCORRECT')
+        logger.info(f'Failed deleting employee: incorrect login: "{login}" or password: "{password}"')
         abort(401, error='CREDENTIALS_INCORRECT')

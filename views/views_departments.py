@@ -1,7 +1,6 @@
 import os
 import sys
-import datetime
-from flask_login import login_user, login_required, logout_user
+from flask_login import login_user, login_required
 import logging
 
 from flask import current_app
@@ -12,9 +11,9 @@ sys.path.append(os.path.abspath(os.path.join('..')))
 from models.employees import Employees
 from models.departments import Departments
 from models.users import User
-from flask import Flask, render_template, request, redirect, Blueprint, url_for, session
+from flask import render_template, request, redirect, Blueprint, session
 from service import avg_salaries, add_dnt, change_dnt, del_dnt
-
+from f_logger import logger
 ADMIN = User.query.get(1).login
 api_departments = Blueprint('api_departments', __name__)
 
@@ -35,6 +34,9 @@ def departments_page():
             department = request.form.get('department')
             if department and not Departments.query.filter_by(department=department).first():
                 add_dnt(department)
+                logger.info(f'Added department: "{department}"')
+            else:
+                logger.info(f'Failed adding department: "{department}"')
             return redirect('/departments')
         return render_template('departments.html', departments=departments, dnt_salary=dnt_salary)
     return render_template('departments_for_users.html', departments=departments, dnt_salary=dnt_salary)
@@ -49,6 +51,7 @@ def delete_dnt(id):
     """
     if session.get('user') == ADMIN:
         del_dnt(id)
+        logger.info(f'Deleted department: id: "{id}"')
         return redirect('/departments')
 
 @api_departments.route('/departments/<int:id>/edit', methods=['GET', 'POST'])
@@ -70,6 +73,9 @@ def edit_dnt(id):
                         (not Departments.query.filter_by(department=department).first() or
                          Departments.query.get(id).department == department):
                     change_dnt(id, department)
+                    logger.info(f'Edited department: id: "{id}"\tdepartment: "{department}"')
+                else:
+                    logger.info(f'Failed editing department: id: "{id}"\tdepartment: "{department}"')
                 return redirect('/departments')
             return render_template('departments.html', id=id, departments=departments, dnt_salary=dnt_salary)
         return redirect('/departments')

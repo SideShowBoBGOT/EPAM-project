@@ -3,13 +3,12 @@ import os
 import sys
 import datetime
 
-
 sys.path.append(os.path.abspath(os.path.join('..')))
 from .common_funcs import check_empty_strings
 from models.users import User
 from models.departments import Departments
 from models.employees import Employees
-
+from f_logger import logger
 from service import add_emp, find_emp, change_emp, del_emp
 
 get_args = reqparse.RequestParser()
@@ -71,21 +70,25 @@ class EmployeesAPIadd(Resource):
         login = args['login']
         password = args['password']
         user = User.query.filter_by(login=login).first()
+        name = args['name']
+        department = args['department']
+        salary = args['salary']
+        birth_date = args['birth_date']
         if user and user.password == password and user.id == 1:
-            name = args['name']
-            department = args['department']
-            salary = args['salary']
-            birth_date = args['birth_date']
-            if Departments.query.filter_by(department=department).first():
-                try:
-                    if check_empty_strings(name) and salary > 0:
-                        birth_date = datetime.datetime.strptime(birth_date, '%Y-%m-%d').date()
-                        add_emp(name, department, salary, birth_date)
-                        return {'message': 'ADD_SUCCESS'}
-                    raise ValueError
-                except ValueError:
-                    abort(406, error='ARGUMENTS_INCORRECT')
-            abort(406, error='NO_SUCH_DEPARTMENT_EXISTS')
+            try:
+                if Departments.query.filter_by(department=department).first() \
+                        and check_empty_strings(name) and salary > 0:
+                    birth_date = datetime.datetime.strptime(birth_date, '%Y-%m-%d').date()
+                    add_emp(name, department, salary, birth_date)
+                    logger.info(f'Added employee: name: "{name}"\tdepartment: "{department}"'
+                                f'\tsalary: "{salary}"\tbirthdate: "{birth_date}"')
+                    return {'message': 'ADD_SUCCESS'}
+                raise ValueError
+            except ValueError:
+                logger.info(f'Failed editing employee: id: "{id}"\t name: "{name}"\tdepartment: "{department}"'
+                            f'\tsalary: "{salary}"\tbirthdate: "{birth_date}"')
+                abort(406, error='ARGUMENTS_INCORRECT')
+        logger.info(f'Failed adding employee: incorrect login: "{login}" or password: "{password}"')
         abort(401, error='CREDENTIALS_INCORRECT')
 
 
@@ -95,24 +98,28 @@ class EmployeesAPIfind(Resource):
         login = args['login']
         password = args['password']
         user = User.query.filter_by(login=login).first()
+        from_date = args['from_date']
+        to_date = args['to_date']
         if user and user.password == password:
-            from_date = args['from_date']
-            to_date = args['to_date']
             try:
                 from_date = datetime.datetime.strptime(from_date, '%Y-%m-%d').date()
                 to_date = datetime.datetime.strptime(to_date, '%Y-%m-%d').date()
-                if to_date >= from_date:
-                    employees = find_emp(from_date, to_date)
-                    employees_dict = dict()
-                    for index, emp in enumerate(employees):
-                        employees_dict[f'{index}'] = {'id': emp.id, 'name': emp.name,
-                                                      'department': emp.department,
-                                                      'salary': emp.salary,
-                                                      'birth_date': str(emp.birth_date)}
-                    return employees_dict
-                raise ValueError
+                if to_date < from_date:
+                    raise ValueError
+                employees = find_emp(from_date, to_date)
+                employees_dict = dict()
+                for index, emp in enumerate(employees):
+                    employees_dict[f'{index}'] = {'id': emp.id, 'name': emp.name,
+                                                  'department': emp.department,
+                                                  'salary': emp.salary,
+                                                  'birth_date': str(emp.birth_date)}
+                logger.info(f'Found employees: from_date: "{from_date}"\tto_date: "{to_date}"')
+                return employees_dict
             except ValueError:
+                logger.info(f'Failed finding employees: from_date: "{from_date}"\tto_date: "{to_date}"')
                 abort(406, error='ARGUMENTS_INCORRECT')
+        else:
+            logger.info(f'Failed adding employee: incorrect login: "{login}" or password: "{password}"')
         abort(401, error='CREDENTIALS_INCORRECT')
 
 
@@ -122,24 +129,26 @@ class EmployeesAPIedit(Resource):
         login = args['login']
         password = args['password']
         user = User.query.filter_by(login=login).first()
+        name = args['name']
+        department = args['department']
+        salary = args['salary']
+        birth_date = args['birth_date']
+        id = args['id']
         if user and user.password == password and user.id == 1:
-            name = args['name']
-            department = args['department']
-            salary = args['salary']
-            birth_date = args['birth_date']
-            id = args['id']
-            if Employees.query.get(id):
-                if Departments.query.filter_by(department=department).first():
-                    try:
-                        if check_empty_strings(name) and salary > 0:
-                            birth_date = datetime.datetime.strptime(birth_date, '%Y-%m-%d').date()
-                            change_emp(id, name, department, salary, birth_date)
-                            return {'message': 'EDIT_SUCCESS'}
-                        raise ValueError
-                    except ValueError:
-                        abort(406, error='ARGUMENTS_INCORRECT')
-                abort(406, error='NO_SUCH_DEPARTMENT_EXISTS')
-            abort(406, error='NO_SUCH_ID')
+            try:
+                if Employees.query.get(id) and Departments.query.filter_by(department=department).first() \
+                        and check_empty_strings(name) and salary > 0:
+                    birth_date = datetime.datetime.strptime(birth_date, '%Y-%m-%d').date()
+                    change_emp(id, name, department, salary, birth_date)
+                    logger.info(f'Edited employee: id: "{id}"\t name: "{name}"\tdepartment: "{department}"'
+                                f'\tsalary: "{salary}"\tbirthdate: "{birth_date}"')
+                    return {'message': 'EDIT_SUCCESS'}
+                raise ValueError
+            except ValueError:
+                logger.info(f'Failed editing employee: id: "{id}"\t name: "{name}"\tdepartment: "{department}"'
+                            f'\tsalary: "{salary}"\tbirthdate: "{birth_date}"')
+                abort(406, error='ARGUMENTS_INCORRECT')
+        logger.info(f'Failed adding employee: incorrect login: "{login}" or password: "{password}"')
         abort(401, error='CREDENTIALS_INCORRECT')
 
 
@@ -149,10 +158,13 @@ class EmployeesAPIdel(Resource):
         login = args['login']
         password = args['password']
         user = User.query.filter_by(login=login).first()
+        id = args['id']
         if user and user.password == password and user.id == 1:
-            id = args['id']
             if Employees.query.get(id):
                 del_emp(id)
+                logger.info(f'Deleted employee: id: "{id}"')
                 return {'message': 'DEL_SUCCESS'}
-            abort(406, error='NO_SUCH_ID')
+            logger.info(f'Failed deleting employee: id: "{id}"')
+            abort(406, error='ARGUMENTS_INCORRECT')
+        logger.info(f'Failed adding employee: incorrect login: "{login}" or password: "{password}"')
         abort(401, error='CREDENTIALS_INCORRECT')

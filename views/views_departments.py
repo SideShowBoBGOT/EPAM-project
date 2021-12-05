@@ -10,17 +10,19 @@ import os
 import sys
 from flask_login import login_user, login_required
 
-
 sys.path.append(os.path.abspath(os.path.join('..')))
 
 from models.employees import Employees
 from models.departments import Departments
 from models.users import User
 from flask import render_template, request, redirect, Blueprint, session
-from service import avg_salaries, add_dnt, change_dnt, del_dnt
+from migrations.migrations_funcs import avg_salaries
+from service import add_dnt, change_dnt, del_dnt
 from f_logger import logger
+
 ADMIN = User.query.get(1).login
 api_departments = Blueprint('api_departments', __name__)
+
 
 @api_departments.route('/departments', methods=['POST', 'GET'])
 @login_required
@@ -46,6 +48,7 @@ def departments_page():
         return render_template('departments.html', departments=departments, dnt_salary=dnt_salary)
     return render_template('departments_for_users.html', departments=departments, dnt_salary=dnt_salary)
 
+
 @api_departments.route('/departments/<int:id>/del')
 @login_required
 def delete_dnt(id):
@@ -58,6 +61,7 @@ def delete_dnt(id):
         del_dnt(id)
         logger.info(f'Deleted department: id: "{id}"')
         return redirect('/departments')
+
 
 @api_departments.route('/departments/<int:id>/edit', methods=['GET', 'POST'])
 @login_required
@@ -84,9 +88,6 @@ def edit_dnt(id):
                 return redirect('/departments')
             return render_template('departments.html', id=id, departments=departments, dnt_salary=dnt_salary)
         return redirect('/departments')
-
-
-
 
 
 @api_departments.before_request

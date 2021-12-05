@@ -1,3 +1,12 @@
+"""
+Module contains classes to work with REST API for User.
+
+Classes:
+    UserAPIget(Resource)
+    UserAPIadd(Resource)
+    UserAPIedit(Resource)
+    UserAPIdel(Resource)
+"""
 from flask_restful import Resource, abort, reqparse
 import os
 import sys
@@ -33,7 +42,20 @@ del_args.add_argument("id", type=int, help="Id of the user to delete", required=
 
 
 class UserAPIget(Resource):
+    """
+    Class ,which is descendant of Resource, is responsible
+    for giving info about users of the table.
+
+    Methods:
+        post(self)
+    """
     def post(self):
+        """
+        Method overrides post method of Resource and
+        works on post method, giving info about users,
+        only if credentials are correct.
+        :return: dict of user information
+        """
         args = get_args.parse_args()
         login = args['login']
         password = args['password']
@@ -52,7 +74,20 @@ class UserAPIget(Resource):
 
 
 class UserAPIadd(Resource):
+    """
+    Class ,which is descendant of Resource, is responsible
+    for adding users to the table.
+
+    Methods:
+        post(self)
+    """
     def post(self):
+        """
+         Method overrides post method of Resource and
+         works on post method, adding users,
+         only if arguments and credentials are correct.
+         :return: dict of messages or errors
+        """
         args = add_args.parse_args()
         login = args['login']
         password = args['password']
@@ -72,7 +107,20 @@ class UserAPIadd(Resource):
 
 
 class UserAPIedit(Resource):
+    """
+    Class ,which is descendant of Resource, is responsible
+    for editing users of the table.
+
+    Methods:
+        post(self)
+    """
     def post(self):
+        """
+         Method overrides post method of Resource and
+         works on post method, editing users,
+         only if arguments and credentials are correct.
+         :return: dict of messages or errors
+        """
         args = edit_args.parse_args()
         login = args['login']
         password = args['password']
@@ -93,7 +141,20 @@ class UserAPIedit(Resource):
 
 
 class UserAPIdel(Resource):
+    """
+    Class ,which is descendant of Resource, is responsible
+    for deleting users from the table.
+
+    Methods:
+        post(self)
+    """
     def post(self):
+        """
+         Method overrides post method of Resource and
+         works on post method, deleting users,
+         only if arguments and credentials are correct.
+         :return: dict of messages or errors
+        """
         args = del_args.parse_args()
         login = args['login']
         password = args['password']

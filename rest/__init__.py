@@ -1,3 +1,20 @@
+"""
+Module contains classes to work with REST API, API instance.
+
+Classes:
+    DepartmentsAPIget(Resource)
+    DepartmentsAPIadd(Resource)
+    DepartmentsAPIedit(Resource)
+    DepartmentsAPIdel(Resource)
+    EmployeesAPIget(Resource)
+    EmployeesAPIadd(Resource)
+    EmployeesAPIedit(Resource)
+    EmployeesAPIdel(Resource)
+    UserAPIget(Resource)
+    UserAPIadd(Resource)
+    UserAPIedit(Resource)
+    UserAPIdel(Resource)
+"""
 from flask_restful import Api
 from .rest_users import UserAPIget, UserAPIadd, UserAPIedit, UserAPIdel
 from .rest_departments import DepartmentsAPIget, DepartmentsAPIadd, DepartmentsAPIedit, DepartmentsAPIdel

@@ -1,3 +1,12 @@
+"""
+Module contains classes to work with REST API for Employees.
+
+Classes:
+    DepartmentsAPIget(Resource)
+    DepartmentsAPIadd(Resource)
+    DepartmentsAPIedit(Resource)
+    DepartmentsAPIdel(Resource)
+"""
 from flask_restful import Resource, abort, reqparse
 import os
 import sys
@@ -7,7 +16,8 @@ from .common_funcs import check_empty_strings
 from models.users import User
 from models.departments import Departments
 from models.employees import Employees
-from service import avg_salaries, add_dnt, change_dnt, del_dnt
+from migrations.migrations_funcs import avg_salaries
+from service import add_dnt, change_dnt, del_dnt
 from f_logger import logger
 
 get_args = reqparse.RequestParser()
@@ -32,7 +42,20 @@ del_args.add_argument("id", type=int, help="Id of the department to delete", req
 
 
 class DepartmentsAPIget(Resource):
+    """
+    Class ,which is descendant of Resource, is responsible
+    for giving info about departments of the table.
+
+    Methods:
+        post(self)
+    """
     def post(self):
+        """
+        Method overrides post method of Resource and
+        works on post method, giving info about departments,
+        only if credentials are correct.
+        :return: dict of user information
+        """
         args = get_args.parse_args()
         login = args['login']
         password = args['password']
@@ -50,7 +73,20 @@ class DepartmentsAPIget(Resource):
 
 
 class DepartmentsAPIadd(Resource):
+    """
+    Class ,which is descendant of Resource, is responsible
+    for adding departments to the table.
+
+    Methods:
+        post(self)
+    """
     def post(self):
+        """
+         Method overrides post method of Resource and
+         works on post method, adding departments,
+         only if arguments and credentials are correct.
+         :return: dict of messages or errors
+        """
         args = add_args.parse_args()
         login = args['login']
         password = args['password']
@@ -68,7 +104,20 @@ class DepartmentsAPIadd(Resource):
 
 
 class DepartmentsAPIedit(Resource):
+    """
+    Class ,which is descendant of Resource, is responsible
+    for editing departments of the table.
+
+    Methods:
+        post(self)
+    """
     def post(self):
+        """
+         Method overrides post method of Resource and
+         works on post method, editing departments,
+         only if arguments and credentials are correct.
+         :return: dict of messages or errors
+        """
         args = edit_args.parse_args()
         login = args['login']
         password = args['password']
@@ -89,7 +138,20 @@ class DepartmentsAPIedit(Resource):
 
 
 class DepartmentsAPIdel(Resource):
+    """
+    Class ,which is descendant of Resource, is responsible
+    for deleting departments from the table.
+
+    Methods:
+        post(self)
+    """
     def post(self):
+        """
+         Method overrides post method of Resource and
+         works on post method, deleting departments,
+         only if arguments and credentials are correct.
+         :return: dict of messages or errors
+        """
         args = del_args.parse_args()
         login = args['login']
         password = args['password']

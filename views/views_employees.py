@@ -19,7 +19,8 @@ from models.employees import Employees
 from models.departments import Departments
 from models.users import User
 from flask import render_template, request, redirect, Blueprint, session
-from service import add_emp, find_emp, change_emp, del_emp
+from migrations.migrations_funcs import find_emp
+from service import add_emp, change_emp, del_emp
 from f_logger import logger
 
 ADMIN = User.query.get(1).login
@@ -44,8 +45,9 @@ def employees_page():
             try:
                 from_date = datetime.datetime.strptime(from_date, '%Y-%m-%d').date()
                 to_date = datetime.datetime.strptime(to_date, '%Y-%m-%d').date()
-                if to_date >= from_date:
-                    employees = find_emp(from_date, to_date)
+                if to_date < from_date:
+                    raise ValueError
+                employees = find_emp(from_date, to_date)
                 logger.info(f'Found employees: from_date: "{from_date}"\tto_date: "{to_date}"')
             except:
                 logger.info(f'Failed finding employees: from_date: "{from_date}"\tto_date: "{to_date}"')

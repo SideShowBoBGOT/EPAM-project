@@ -1,3 +1,12 @@
+"""
+Module contains classes to work with REST API for Employees.
+
+Classes:
+    EmployeesAPIget(Resource)
+    EmployeesAPIadd(Resource)
+    EmployeesAPIedit(Resource)
+    EmployeesAPIdel(Resource)
+"""
 from flask_restful import Resource, abort, reqparse
 import os
 import sys
@@ -9,7 +18,8 @@ from models.users import User
 from models.departments import Departments
 from models.employees import Employees
 from f_logger import logger
-from service import add_emp, find_emp, change_emp, del_emp
+from migrations.migrations_funcs import find_emp
+from service import add_emp, change_emp, del_emp
 
 get_args = reqparse.RequestParser()
 get_args.add_argument("login", type=str, help="User`s login", required=True)
@@ -47,7 +57,20 @@ del_args.add_argument("id", type=int, help="Id of the employee to delete", requi
 
 
 class EmployeesAPIget(Resource):
+    """
+    Class ,which is descendant of Resource, is responsible
+    for giving info about employees of the table.
+
+    Methods:
+        post(self)
+    """
     def post(self):
+        """
+        Method overrides post method of Resource and
+        works on post method, giving info about employees,
+        only if credentials are correct.
+        :return: dict of user information
+        """
         args = get_args.parse_args()
         login = args['login']
         password = args['password']
@@ -65,7 +88,20 @@ class EmployeesAPIget(Resource):
 
 
 class EmployeesAPIadd(Resource):
+    """
+    Class ,which is descendant of Resource, is responsible
+    for adding employees to the table.
+
+    Methods:
+        post(self)
+    """
     def post(self):
+        """
+         Method overrides post method of Resource and
+         works on post method, adding employees,
+         only if arguments and credentials are correct.
+         :return: dict of messages or errors
+        """
         args = add_args.parse_args()
         login = args['login']
         password = args['password']
@@ -93,7 +129,21 @@ class EmployeesAPIadd(Resource):
 
 
 class EmployeesAPIfind(Resource):
+    """
+    Class ,which is descendant of Resource, is responsible
+    for finding employees by date of birth.
+
+    Methods:
+        post(self)
+    """
     def post(self):
+        """
+         Method overrides post method of Resource and
+         works on post method, finding employees by
+         date of birth, only if arguments and
+         credentials are correct.
+         :return: dict of messages or errors
+        """
         args = find_args.parse_args()
         login = args['login']
         password = args['password']
@@ -124,7 +174,20 @@ class EmployeesAPIfind(Resource):
 
 
 class EmployeesAPIedit(Resource):
+    """
+    Class ,which is descendant of Resource, is responsible
+    for editing employees of the table.
+
+    Methods:
+        post(self)
+    """
     def post(self):
+        """
+         Method overrides post method of Resource and
+         works on post method, editing employees,
+         only if arguments and credentials are correct.
+         :return: dict of messages or errors
+        """
         args = edit_args.parse_args()
         login = args['login']
         password = args['password']
@@ -153,7 +216,20 @@ class EmployeesAPIedit(Resource):
 
 
 class EmployeesAPIdel(Resource):
+    """
+    Class ,which is descendant of Resource, is responsible
+    for deleting employees from the table.
+
+    Methods:
+        post(self)
+    """
     def post(self):
+        """
+         Method overrides post method of Resource and
+         works on post method, deleting employees,
+         only if arguments and credentials are correct.
+         :return: dict of messages or errors
+        """
         args = del_args.parse_args()
         login = args['login']
         password = args['password']

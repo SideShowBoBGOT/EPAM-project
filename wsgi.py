@@ -1,3 +1,6 @@
+"""
+Module containing the main app instance.
+"""
 from application import create_app
 
 app = create_app()

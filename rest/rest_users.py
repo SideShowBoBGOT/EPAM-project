@@ -47,12 +47,12 @@ class UserAPIget(Resource):
     for giving info about users of the table.
 
     Methods:
-        post(self)
+        get(self)
     """
-    def post(self):
+    def get(self):
         """
-        Method overrides post method of Resource and
-        works on post method, giving info about users,
+        Method overrides get method of Resource and
+        works on get method, giving info about users,
         only if credentials are correct.
         :return: dict of user information
         """
@@ -79,12 +79,12 @@ class UserAPIadd(Resource):
     for adding users to the table.
 
     Methods:
-        post(self)
+        get(self)
     """
-    def post(self):
+    def get(self):
         """
-         Method overrides post method of Resource and
-         works on post method, adding users,
+         Method overrides get method of Resource and
+         works on get method, adding users,
          only if arguments and credentials are correct.
          :return: dict of messages or errors
         """
@@ -112,12 +112,12 @@ class UserAPIedit(Resource):
     for editing users of the table.
 
     Methods:
-        post(self)
+        get(self)
     """
-    def post(self):
+    def get(self):
         """
-         Method overrides post method of Resource and
-         works on post method, editing users,
+         Method overrides get method of Resource and
+         works on get method, editing users,
          only if arguments and credentials are correct.
          :return: dict of messages or errors
         """
@@ -146,12 +146,12 @@ class UserAPIdel(Resource):
     for deleting users from the table.
 
     Methods:
-        post(self)
+        get(self)
     """
-    def post(self):
+    def get(self):
         """
-         Method overrides post method of Resource and
-         works on post method, deleting users,
+         Method overrides get method of Resource and
+         works on get method, deleting users,
          only if arguments and credentials are correct.
          :return: dict of messages or errors
         """

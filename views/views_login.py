@@ -34,7 +34,7 @@ def login_page():
             user = User.query.filter_by(login=login).first()
             if user and user.password == password:
                 login_user(user)
-                session['user'] = login
+                session['user'] = (login, password)
                 logger.info(f'Authorized: login: "{login}"\tpassword: "{password}"')
                 return redirect('/departments')
         else:

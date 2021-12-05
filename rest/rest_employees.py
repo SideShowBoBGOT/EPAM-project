@@ -8,6 +8,7 @@ Classes:
     EmployeesAPIdel(Resource)
 """
 from flask_restful import Resource, abort, reqparse
+from flask import redirect
 import os
 import sys
 import datetime
@@ -32,6 +33,7 @@ add_args.add_argument("name", type=str, help="Name of new employee", required=Tr
 add_args.add_argument("department", type=str, help="Department of new employee", required=True)
 add_args.add_argument("salary", type=float, help="Salary of new employee", required=True)
 add_args.add_argument("birth_date", type=str, help="Birthdate of new employee", required=True)
+add_args.add_argument("page", type=str, help="Redirects to prev page")
 
 find_args = reqparse.RequestParser()
 find_args.add_argument("login", type=str, help="User`s login", required=True)
@@ -40,6 +42,7 @@ find_args.add_argument("from_date", type=str, help="Format: YYYY-mm-dd. Date fro
                        required=True)
 find_args.add_argument("to_date", type=str, help="Format: YYYY-mm-dd. Date till which employee is sought",
                        required=True)
+find_args.add_argument("page", type=str, help="Redirects to prev page")
 
 edit_args = reqparse.RequestParser()
 edit_args.add_argument("login", type=str, help="User`s login", required=True)
@@ -49,11 +52,13 @@ edit_args.add_argument("department", type=str, help="New department of the emplo
 edit_args.add_argument("salary", type=float, help="New salary of the employee", required=True)
 edit_args.add_argument("birth_date", type=str, help="New birthdate of the employee", required=True)
 edit_args.add_argument("id", type=int, help="Id of the employee to edit", required=True)
+edit_args.add_argument("page", type=str, help="Redirects to prev page")
 
 del_args = reqparse.RequestParser()
 del_args.add_argument("login", type=str, help="User`s login", required=True)
 del_args.add_argument("password", type=str, help="User`s password", required=True)
 del_args.add_argument("id", type=int, help="Id of the employee to delete", required=True)
+del_args.add_argument("page", type=str, help="Redirects to prev page")
 
 
 class EmployeesAPIget(Resource):
@@ -62,12 +67,13 @@ class EmployeesAPIget(Resource):
     for giving info about employees of the table.
 
     Methods:
-        post(self)
+        get(self)
     """
-    def post(self):
+
+    def get(self):
         """
-        Method overrides post method of Resource and
-        works on post method, giving info about employees,
+        Method overrides get method of Resource and
+        works on get method, giving info about employees,
         only if credentials are correct.
         :return: dict of user information
         """
@@ -93,12 +99,13 @@ class EmployeesAPIadd(Resource):
     for adding employees to the table.
 
     Methods:
-        post(self)
+        get(self)
     """
-    def post(self):
+
+    def get(self):
         """
-         Method overrides post method of Resource and
-         works on post method, adding employees,
+         Method overrides get method of Resource and
+         works on get method, adding employees,
          only if arguments and credentials are correct.
          :return: dict of messages or errors
         """
@@ -110,6 +117,7 @@ class EmployeesAPIadd(Resource):
         department = args['department']
         salary = args['salary']
         birth_date = args['birth_date']
+        page = args.get('page')
         if user and user.password == password and user.id == 1:
             try:
                 if Departments.query.filter_by(department=department).first() \
@@ -118,11 +126,15 @@ class EmployeesAPIadd(Resource):
                     add_emp(name, department, salary, birth_date)
                     logger.info(f'Added employee: name: "{name}"\tdepartment: "{department}"'
                                 f'\tsalary: "{salary}"\tbirthdate: "{birth_date}"')
+                    if page and page == 'True':
+                        return redirect('/employees')
                     return {'message': 'ADD_SUCCESS'}
                 raise ValueError
-            except ValueError:
-                logger.info(f'Failed editing employee: id: "{id}"\t name: "{name}"\tdepartment: "{department}"'
+            except:
+                logger.info(f'Failed adding employee: name: "{name}"\tdepartment: "{department}"'
                             f'\tsalary: "{salary}"\tbirthdate: "{birth_date}"')
+                if page and page == 'True':
+                    return redirect('/employees')
                 abort(406, error='ARGUMENTS_INCORRECT')
         logger.info(f'Failed adding employee: incorrect login: "{login}" or password: "{password}"')
         abort(401, error='CREDENTIALS_INCORRECT')
@@ -134,12 +146,13 @@ class EmployeesAPIfind(Resource):
     for finding employees by date of birth.
 
     Methods:
-        post(self)
+        get(self)
     """
-    def post(self):
+
+    def get(self):
         """
-         Method overrides post method of Resource and
-         works on post method, finding employees by
+         Method overrides get method of Resource and
+         works on get method, finding employees by
          date of birth, only if arguments and
          credentials are correct.
          :return: dict of messages or errors
@@ -150,6 +163,7 @@ class EmployeesAPIfind(Resource):
         user = User.query.filter_by(login=login).first()
         from_date = args['from_date']
         to_date = args['to_date']
+        page = args.get('page')
         if user and user.password == password:
             try:
                 from_date = datetime.datetime.strptime(from_date, '%Y-%m-%d').date()
@@ -158,15 +172,21 @@ class EmployeesAPIfind(Resource):
                     raise ValueError
                 employees = find_emp(from_date, to_date)
                 employees_dict = dict()
+                ids = ''
                 for index, emp in enumerate(employees):
                     employees_dict[f'{index}'] = {'id': emp.id, 'name': emp.name,
                                                   'department': emp.department,
                                                   'salary': emp.salary,
                                                   'birth_date': str(emp.birth_date)}
+                    ids += str(emp.id) + '.'
                 logger.info(f'Found employees: from_date: "{from_date}"\tto_date: "{to_date}"')
+                if page and page == 'True':
+                    return redirect('/employees/' + ids[:-1])
                 return employees_dict
-            except ValueError:
+            except:
                 logger.info(f'Failed finding employees: from_date: "{from_date}"\tto_date: "{to_date}"')
+                if page and page == 'True':
+                    return redirect('/employees')
                 abort(406, error='ARGUMENTS_INCORRECT')
         else:
             logger.info(f'Failed adding employee: incorrect login: "{login}" or password: "{password}"')
@@ -179,12 +199,13 @@ class EmployeesAPIedit(Resource):
     for editing employees of the table.
 
     Methods:
-        post(self)
+        get(self)
     """
-    def post(self):
+
+    def get(self):
         """
-         Method overrides post method of Resource and
-         works on post method, editing employees,
+         Method overrides get method of Resource and
+         works on get method, editing employees,
          only if arguments and credentials are correct.
          :return: dict of messages or errors
         """
@@ -197,6 +218,7 @@ class EmployeesAPIedit(Resource):
         salary = args['salary']
         birth_date = args['birth_date']
         id = args['id']
+        page = args.get('page')
         if user and user.password == password and user.id == 1:
             try:
                 if Employees.query.get(id) and Departments.query.filter_by(department=department).first() \
@@ -205,11 +227,15 @@ class EmployeesAPIedit(Resource):
                     change_emp(id, name, department, salary, birth_date)
                     logger.info(f'Edited employee: id: "{id}"\t name: "{name}"\tdepartment: "{department}"'
                                 f'\tsalary: "{salary}"\tbirthdate: "{birth_date}"')
+                    if page and page == 'True':
+                        return redirect('/employees')
                     return {'message': 'EDIT_SUCCESS'}
                 raise ValueError
-            except ValueError:
+            except:
                 logger.info(f'Failed editing employee: id: "{id}"\t name: "{name}"\tdepartment: "{department}"'
                             f'\tsalary: "{salary}"\tbirthdate: "{birth_date}"')
+                if page and page == 'True':
+                    return redirect('/employees')
                 abort(406, error='ARGUMENTS_INCORRECT')
         logger.info(f'Failed adding employee: incorrect login: "{login}" or password: "{password}"')
         abort(401, error='CREDENTIALS_INCORRECT')
@@ -221,12 +247,13 @@ class EmployeesAPIdel(Resource):
     for deleting employees from the table.
 
     Methods:
-        post(self)
+        get(self)
     """
-    def post(self):
+
+    def get(self):
         """
-         Method overrides post method of Resource and
-         works on post method, deleting employees,
+         Method overrides get method of Resource and
+         works on get method, deleting employees,
          only if arguments and credentials are correct.
          :return: dict of messages or errors
         """
@@ -235,12 +262,17 @@ class EmployeesAPIdel(Resource):
         password = args['password']
         user = User.query.filter_by(login=login).first()
         id = args['id']
+        page = args.get('page')
         if user and user.password == password and user.id == 1:
             if Employees.query.get(id):
                 del_emp(id)
                 logger.info(f'Deleted employee: id: "{id}"')
+                if page and page == 'True':
+                    return redirect('/employees')
                 return {'message': 'DEL_SUCCESS'}
             logger.info(f'Failed deleting employee: id: "{id}"')
+            if page and page == 'True':
+                return redirect('/employees')
             abort(406, error='ARGUMENTS_INCORRECT')
         logger.info(f'Failed adding employee: incorrect login: "{login}" or password: "{password}"')
         abort(401, error='CREDENTIALS_INCORRECT')

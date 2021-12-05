@@ -33,8 +33,8 @@ def check_session():
     already created. Else redirects to the main page.
     :return: None or redirect
     """
-    users = User.query.filter_by(login=session.get('user')).all()
-    if users:
+    if session.get('user') and session.get('user')[0] == ADMIN:
+        users = User.query.filter_by(login=session.get('user')[0]).all()
         login_user(users[0])
         session.permanent = False
     else:

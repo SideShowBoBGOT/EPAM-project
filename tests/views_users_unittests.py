@@ -35,10 +35,10 @@ class FlaskTestCases(unittest.TestCase):
 
         prev_user_num = len(User.query.all())
 
-        # suppose that user inputs login that already exists or None
+        # suppose that user inputs login that already exists or ''
         user = User.query.all()[-1]
-        user_login_states = (None, user.login)
-        user_password_states = (None, user.password)
+        user_login_states = ('', user.login)
+        user_password_states = ('', user.password)
         for log in user_login_states:
             for pasw in user_password_states:
                 response = tester.post('/users', data=dict(login=log, password=pasw), follow_redirects=True)
@@ -95,8 +95,8 @@ class FlaskTestCases(unittest.TestCase):
         response = tester.get('/users', content_type='html/text')
         user_to_edit_id = User.query.all()[-1].id
         user = User.query.all()[-1]
-        user_login_states = (None, user.login)
-        user_password_states = (None, user.password)
+        user_login_states = ('', user.login)
+        user_password_states = ('', user.password)
 
         for log in user_login_states:
             for pasw in user_password_states:

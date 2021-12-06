@@ -8,6 +8,7 @@ Classes:
     DepartmentsAPIdel(Resource)
 """
 from flask_restful import Resource, abort, reqparse
+from flask import redirect
 import os
 import sys
 
@@ -28,17 +29,20 @@ add_args = reqparse.RequestParser()
 add_args.add_argument("login", type=str, help="User`s login", required=True)
 add_args.add_argument("password", type=str, help="User`s password", required=True)
 add_args.add_argument("department", type=str, help="Name of new department", required=True)
+add_args.add_argument("page", type=str, help="Redirects to prev page")
 
 edit_args = reqparse.RequestParser()
 edit_args.add_argument("login", type=str, help="User`s login", required=True)
 edit_args.add_argument("password", type=str, help="User`s password", required=True)
 edit_args.add_argument("department", type=str, help="New name of the department", required=True)
 edit_args.add_argument("id", type=int, help="Id of the department to edit", required=True)
+edit_args.add_argument("page", type=str, help="Redirects to prev page")
 
 del_args = reqparse.RequestParser()
 del_args.add_argument("login", type=str, help="User`s login", required=True)
 del_args.add_argument("password", type=str, help="User`s password", required=True)
 del_args.add_argument("id", type=int, help="Id of the department to delete", required=True)
+del_args.add_argument("page", type=str, help="Redirects to prev page")
 
 
 class DepartmentsAPIget(Resource):
@@ -47,12 +51,13 @@ class DepartmentsAPIget(Resource):
     for giving info about departments of the table.
 
     Methods:
-        post(self)
+        get(self)
     """
-    def post(self):
+
+    def get(self):
         """
-        Method overrides post method of Resource and
-        works on post method, giving info about departments,
+        Method overrides get method of Resource and
+        works on get method, giving info about departments,
         only if credentials are correct.
         :return: dict of user information
         """
@@ -78,12 +83,13 @@ class DepartmentsAPIadd(Resource):
     for adding departments to the table.
 
     Methods:
-        post(self)
+        get(self)
     """
-    def post(self):
+
+    def get(self):
         """
-         Method overrides post method of Resource and
-         works on post method, adding departments,
+         Method overrides get method of Resource and
+         works on get method, adding departments,
          only if arguments and credentials are correct.
          :return: dict of messages or errors
         """
@@ -92,12 +98,17 @@ class DepartmentsAPIadd(Resource):
         password = args['password']
         user = User.query.filter_by(login=login).first()
         department = args['department']
+        page = args.get('page')
         if user and user.password == password and user.id == 1:
             if check_empty_strings(department) and not Departments.query.filter_by(department=department).first():
                 add_dnt(department)
                 logger.info(f'Added department: "{department}"')
+                if page and page == 'True':
+                    return redirect('/departments')
                 return {'message': 'ADD_SUCCESS'}
             logger.info(f'Failed adding department: "{department}"')
+            if page and page == 'True':
+                return redirect('/departments')
             abort(401, error='ARGUMENTS_INCORRECT')
         logger.info(f'Failed adding employee: incorrect login: "{login}" or password: "{password}"')
         abort(401, error='CREDENTIALS_INCORRECT')
@@ -109,12 +120,13 @@ class DepartmentsAPIedit(Resource):
     for editing departments of the table.
 
     Methods:
-        post(self)
+        get(self)
     """
-    def post(self):
+
+    def get(self):
         """
-         Method overrides post method of Resource and
-         works on post method, editing departments,
+         Method overrides get method of Resource and
+         works on get method, editing departments,
          only if arguments and credentials are correct.
          :return: dict of messages or errors
         """
@@ -122,16 +134,21 @@ class DepartmentsAPIedit(Resource):
         login = args['login']
         password = args['password']
         user = User.query.filter_by(login=login).first()
+        department = args['department']
+        id = args['id']
+        page = args.get('page')
         if user and user.password == password and user.id == 1:
-            department = args['department']
-            id = args['id']
             if check_empty_strings(department) and Departments.query.get(id) \
                     and (not Departments.query.filter_by(department=department).first()
                          or Departments.query.get(id).department == department):
                 change_dnt(id, department)
                 logger.info(f'Edited department: id: "{id}"\tdepartment: "{department}"')
+                if page and page == 'True':
+                    return redirect('/departments')
                 return {'message': 'EDIT_SUCCESS'}
             logger.info(f'Failed editing department: id: "{id}"\tdepartment: "{department}"')
+            if page and page == 'True':
+                return redirect('/departments')
             abort(401, error='ARGUMENTS_INCORRECT')
         logger.info(f'Failed editing employee: incorrect login: "{login}" or password: "{password}"')
         abort(401, error='CREDENTIALS_INCORRECT')
@@ -143,12 +160,13 @@ class DepartmentsAPIdel(Resource):
     for deleting departments from the table.
 
     Methods:
-        post(self)
+        get(self)
     """
-    def post(self):
+
+    def get(self):
         """
-         Method overrides post method of Resource and
-         works on post method, deleting departments,
+         Method overrides get method of Resource and
+         works on get method, deleting departments,
          only if arguments and credentials are correct.
          :return: dict of messages or errors
         """
@@ -156,13 +174,18 @@ class DepartmentsAPIdel(Resource):
         login = args['login']
         password = args['password']
         user = User.query.filter_by(login=login).first()
+        id = args['id']
+        page = args.get('page')
         if user and user.password == password and user.id == 1:
-            id = args['id']
             if Departments.query.get(id) and id != 1:
                 del_dnt(id)
                 logger.info(f'Deleted department: id: "{id}"')
+                if page and page == 'True':
+                    return redirect('/departments')
                 return {'message': 'DEL_SUCCESS'}
             logger.info(f'Failed deleting department: id: "{id}"')
+            if page and page == 'True':
+                return redirect('/departments')
             abort(406, error='ARGUMENTS_INCORRECT')
         logger.info(f'Failed deleting employee: incorrect login: "{login}" or password: "{password}"')
         abort(401, error='CREDENTIALS_INCORRECT')

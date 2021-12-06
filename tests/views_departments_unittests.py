@@ -27,15 +27,15 @@ class FlaskTestCases(unittest.TestCase):
         tester = app.test_client(self)
         response = tester.post('/', data=dict(login=ADMIN_LOGIN, password=ADMIN_PASSWORD),
                                follow_redirects=True)
-        prev_dnt_num = len(Departments.query.all())
+        prev_dnt_num = Departments.query.all()
         # 1) suppose that user inputs name of the department that already exists
         for dnt in Departments.query.all():
             response = tester.post('/departments', data=dict(department=dnt.department), follow_redirects=True)
-            new_dnt_num = len(Departments.query.all())
+            new_dnt_num = Departments.query.all()
             self.assertTrue(new_dnt_num == prev_dnt_num)
         # 2) suppose that user inputs None
         response = tester.post('/departments', data=dict(department=None), follow_redirects=True)
-        new_dnt_num = len(Departments.query.all())
+        new_dnt_num = Departments.query.all()
         self.assertTrue(new_dnt_num == prev_dnt_num)
 
     # Ensure the departments page behaves correctly canceling changing a dnt

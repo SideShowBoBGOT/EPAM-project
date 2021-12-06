@@ -9,6 +9,7 @@ Functions:
 """
 import os
 import sys
+import urllib.parse
 from flask_login import login_user, login_required, logout_user
 from flask import render_template, request, redirect, Blueprint, url_for, session
 
@@ -34,7 +35,7 @@ def login_page():
             user = User.query.filter_by(login=login).first()
             if user and user.password == password:
                 login_user(user)
-                session['user'] = login
+                session['user'] = (login, password)
                 logger.info(f'Authorized: login: "{login}"\tpassword: "{password}"')
                 return redirect('/departments')
         else:

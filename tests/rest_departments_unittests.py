@@ -39,9 +39,9 @@ class FlaskTestCases(unittest.TestCase):
     def test_departments_add_err(self):
         tester = app.test_client(self)
         prev_users_num = Departments.query.all()
-        login_vars = (None, '', 'incorrect', User.query.all()[0].login)
-        password_vars = (None, '', 'incorrect', User.query.all()[0].password)
-        department_vars = (None, '', Departments.query.all()[-1].department)
+        login_vars = ('', 'incorrect', User.query.all()[0].login)
+        password_vars = ('', 'incorrect', User.query.all()[0].password)
+        department_vars = ('', Departments.query.all()[-1].department)
         variations = []
         for login in login_vars:
             for password in password_vars:

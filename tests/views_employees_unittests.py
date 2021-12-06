@@ -35,10 +35,10 @@ class FlaskTestCases(unittest.TestCase):
         response = tester.post('/', data=dict(login=ADMIN_LOGIN, password=ADMIN_PASSWORD),
                                follow_redirects=True)
         prev_employees = Employees.query.all()
-        name_states = (None, 'askdiuqwebhbvchsf ehasfuywbb')
-        department_states = (None, Departments.query.all()[0].department)
-        birth_date_states = (None, '1978-9-10')
-        salary_states = (None, -19230, '*sdf111', 11000)
+        name_states = ('', 'askdiuqwebhbvchsf ehasfuywbb')
+        department_states = ('', Departments.query.all()[0].department)
+        birth_date_states = ('', '1978-9-10')
+        salary_states = ('', -19230, '*sdf111', 11000)
         variations = []
         for ns in name_states:
             for ds in department_states:
@@ -88,19 +88,19 @@ class FlaskTestCases(unittest.TestCase):
         response2 = tester.post('/employees', data=dict(From=f, To=t), follow_redirects=True)
         # if response1 == response2 page has not changed therefore behaves correctly
         self.assertTrue(response1.data == response2.data)
-        # 2) From = None
-        f = None
+        # 2) From = ''
+        f = ''
         t = '1970-06-05'
         response2 = tester.post('/employees', data=dict(From=f, To=t), follow_redirects=True)
         self.assertTrue(response1.data == response2.data)
-        # 3) To = None
+        # 3) To = ''
         f = '1990-01-10'
-        t = None
+        t = ''
         response2 = tester.post('/employees', data=dict(From=f, To=t), follow_redirects=True)
         self.assertTrue(response1.data == response2.data)
-        # 4) From = None, To = None
-        f = None
-        t = None
+        # 4) From = '', To = ''
+        f = ''
+        t = ''
         response2 = tester.post('/employees', data=dict(From=f, To=t), follow_redirects=True)
         self.assertTrue(response1.data == response2.data)
 
@@ -138,10 +138,10 @@ class FlaskTestCases(unittest.TestCase):
         response = tester.post('/', data=dict(login=ADMIN_LOGIN, password=ADMIN_PASSWORD),
                                follow_redirects=True)
         id = Employees.query.all()[-1].id
-        name_states = (None, 'John Doe')
-        department_states = (None, Departments.query.all()[0].department)
-        birth_date_states = (None, '1978-9-10')
-        salary_states = (None, -19230, '*sdf111', 11000)
+        name_states = ('', 'John Doe')
+        department_states = ('', Departments.query.all()[0].department)
+        birth_date_states = ('', '1978-9-10')
+        salary_states = ('', -19230, '*sdf111', 11000)
         variations = []
         for ns in name_states:
             for ds in department_states:

@@ -8,7 +8,7 @@ Functions:
 """
 import os
 import sys
-import requests
+import urllib.parse
 from flask_login import login_user, login_required
 
 sys.path.append(os.path.abspath(os.path.join('..')))
@@ -39,8 +39,9 @@ def departments_page():
     department = request.form.get('department')
     if session.get('user') and session.get('user')[0] == ADMIN:
         if request.method == 'POST':
-            data = f'?login={session["user"][0]}&password={session["user"][1]}&department={department}&page=True'
-            return redirect(BASE_URL + 'api/departments/add' + data)
+            data =f'?login={session["user"][0]}' \
+                   f'&password={session["user"][1]}&department={urllib.parse.quote(department)}&page=True'
+            return redirect('/api/departments/add' + data)
         return render_template('departments.html', departments=departments, dnt_salary=dnt_salary)
     return render_template('departments_for_users.html', departments=departments, dnt_salary=dnt_salary)
 
@@ -55,7 +56,7 @@ def delete_dnt(id):
     """
     if session.get('user') and session.get('user')[0] == ADMIN:
         data = f'?login={session["user"][0]}&password={session["user"][1]}&id={id}&page=True'
-        return redirect(BASE_URL + 'api/departments/del' + data)
+        return redirect('/api/departments/del' + data)
 
 
 @api_departments.route('/departments/<int:id>/edit', methods=['GET', 'POST'])
@@ -74,8 +75,8 @@ def edit_dnt(id):
         if Departments.query.get(id):
             if request.method == 'POST':
                 data = f'?login={session["user"][0]}&password={session["user"][1]}' \
-                       f'&id={id}&department={department}&page=True'
-                return redirect(BASE_URL + 'api/departments/edit' + data)
+                       f'&id={id}&department={urllib.parse.quote(department)}&page=True'
+                return redirect('/api/departments/edit' + data)
             return render_template('departments.html', id=id, departments=departments, dnt_salary=dnt_salary)
         return redirect('/departments')
 

@@ -9,7 +9,7 @@ Functions:
 """
 import os
 import sys
-import requests
+import urllib.parse
 from flask_login import login_user, login_required
 from flask import render_template, request, redirect, Blueprint, session
 
@@ -36,12 +36,11 @@ def users_page():
         if request.method == 'POST':
             login = request.form.get('login')
             password = request.form.get('password')
-            data = {'login': session['user'][0], 'password': session['user'][1],
-                    'new_login': login, 'new_password': password}
-            requests.post(BASE_URL + 'api/users/add', data=data)
-            return redirect('/users')
+            data = f'?login={session["user"][0]}&password={session["user"][1]}' \
+                   f'&new_login={urllib.parse.quote(login)}&new_password={urllib.parse.quote(password)}&page=True'
+            return redirect('/api/users/add' + data)
         return render_template('users_for_admin.html', users=users)
-    user = User.query.filter_by(login=session.get('user')).first()
+    user = User.query.filter_by(login=session.get('user')[0]).first()
     return render_template('users.html', user=user)
 
 
@@ -59,10 +58,9 @@ def edit_user(id):
             if request.method == 'POST':
                 login = request.form.get('new_login')
                 password = request.form.get('new_password')
-                data = {'login': session['user'][0], 'password': session['user'][1],
-                        'id': id, 'new_login': login, 'new_password': password}
-                requests.post(BASE_URL + 'api/users/edit', data=data)
-                return redirect('/users')
+                data = f'?login={session["user"][0]}&password={session["user"][1]}' \
+                       f'&id={id}&new_login={urllib.parse.quote(login)}&new_password={urllib.parse.quote(password)}&page=True'
+                return redirect('/api/users/edit' + data)
             return render_template('users_for_admin.html', id=id, users=users)
         return redirect('/users')
 
@@ -76,9 +74,9 @@ def delete_user(id):
     :return: redirects user to the users page
     """
     if session.get('user') and session.get('user')[0] == ADMIN:
-        data = {'login': session['user'][0], 'password': session['user'][1], 'id': id}
-        requests.post(BASE_URL + 'api/users/del', data=data)
-        return redirect('/users')
+        data = f'?login={session["user"][0]}&password={session["user"][1]}' \
+               f'&id={id}&page=True'
+        return redirect('/api/users/del' + data)
 
 
 @api_users.before_request
@@ -88,7 +86,7 @@ def check_session():
     already created. Else redirects to the main page.
     :return: None or redirect
     """
-    if session.get('user') and session.get('user')[0] == ADMIN:
+    if session.get('user'):
         users = User.query.filter_by(login=session.get('user')[0]).all()
         login_user(users[0])
         session.permanent = False

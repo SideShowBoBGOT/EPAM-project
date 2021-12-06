@@ -31,7 +31,7 @@ add_args.add_argument("login", type=str, help="User`s login", required=True)
 add_args.add_argument("password", type=str, help="User`s password", required=True)
 add_args.add_argument("name", type=str, help="Name of new employee", required=True)
 add_args.add_argument("department", type=str, help="Department of new employee", required=True)
-add_args.add_argument("salary", type=float, help="Salary of new employee", required=True)
+add_args.add_argument("salary", type=str, help="Salary of new employee", required=True)
 add_args.add_argument("birth_date", type=str, help="Birthdate of new employee", required=True)
 add_args.add_argument("page", type=str, help="Redirects to prev page")
 
@@ -49,7 +49,7 @@ edit_args.add_argument("login", type=str, help="User`s login", required=True)
 edit_args.add_argument("password", type=str, help="User`s password", required=True)
 edit_args.add_argument("name", type=str, help="New name of the employee", required=True)
 edit_args.add_argument("department", type=str, help="New department of the employee", required=True)
-edit_args.add_argument("salary", type=float, help="New salary of the employee", required=True)
+edit_args.add_argument("salary", type=str, help="New salary of the employee", required=True)
 edit_args.add_argument("birth_date", type=str, help="New birthdate of the employee", required=True)
 edit_args.add_argument("id", type=int, help="Id of the employee to edit", required=True)
 edit_args.add_argument("page", type=str, help="Redirects to prev page")
@@ -120,9 +120,11 @@ class EmployeesAPIadd(Resource):
         page = args.get('page')
         if user and user.password == password and user.id == 1:
             try:
+                birth_date = datetime.datetime.strptime(birth_date, '%Y-%m-%d').date()
+                salary = float(salary)
                 if Departments.query.filter_by(department=department).first() \
                         and check_empty_strings(name) and salary > 0:
-                    birth_date = datetime.datetime.strptime(birth_date, '%Y-%m-%d').date()
+
                     add_emp(name, department, salary, birth_date)
                     logger.info(f'Added employee: name: "{name}"\tdepartment: "{department}"'
                                 f'\tsalary: "{salary}"\tbirthdate: "{birth_date}"')
@@ -221,9 +223,10 @@ class EmployeesAPIedit(Resource):
         page = args.get('page')
         if user and user.password == password and user.id == 1:
             try:
+                birth_date = datetime.datetime.strptime(birth_date, '%Y-%m-%d').date()
+                salary = float(salary)
                 if Employees.query.get(id) and Departments.query.filter_by(department=department).first() \
                         and check_empty_strings(name) and salary > 0:
-                    birth_date = datetime.datetime.strptime(birth_date, '%Y-%m-%d').date()
                     change_emp(id, name, department, salary, birth_date)
                     logger.info(f'Edited employee: id: "{id}"\t name: "{name}"\tdepartment: "{department}"'
                                 f'\tsalary: "{salary}"\tbirthdate: "{birth_date}"')

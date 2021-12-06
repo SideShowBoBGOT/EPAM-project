@@ -9,7 +9,7 @@ Functions:
 """
 import os
 import sys
-import requests
+import urllib.parse
 from flask_login import login_user, login_required
 
 sys.path.append(os.path.abspath(os.path.join('..')))
@@ -40,20 +40,21 @@ def employees_page(ids):
         ids = list(map(lambda x: int(x), ids.split('.')))
         employees = list(filter(lambda x: x.id in ids, Employees.query.all()))
     if request.method == 'POST':
-        name = request.form.get('name')
-        department = request.form.get('department')
-        salary = request.form.get('salary')
-        birth_date = request.form.get('birth_date')
+        name = str(request.form.get('name'))
+        department = str(request.form.get('department'))
+        salary = str(request.form.get('salary'))
+        birth_date = str(request.form.get('birth_date'))
         from_date = request.form.get('From')
         to_date = request.form.get('To')
         if from_date and to_date:
             data = f'?login={session["user"][0]}&password={session["user"][1]}' \
                    f'&from_date={from_date}&to_date={to_date}&page=True'
-            return redirect(BASE_URL + 'api/employees/find' + data)
+            return redirect('/api/employees/find' + data)
         elif session.get('user') and session.get('user')[0] == ADMIN:
             data = f'?login={session["user"][0]}&password={session["user"][1]}' \
-                   f'&name={name}&department={department}&salary={salary}&birth_date={birth_date}&page=True'
-            return redirect(BASE_URL + 'api/employees/add' + data)
+                   f'&name={urllib.parse.quote(name)}&department={urllib.parse.quote(department)}' \
+                   f'&salary={urllib.parse.quote(salary)}&birth_date={birth_date}&page=True'
+            return redirect('/api/employees/add' + data)
     if session.get('user') and session.get('user')[0] == ADMIN:
         return render_template('employees.html', employees=employees, departments=departments)
     return render_template('employees_for_users.html', employees=employees, departments=departments)
@@ -77,8 +78,9 @@ def edit_emp(id):
                 salary = request.form.get('new_salary')
                 birth_date = request.form.get('new_birth_date')
                 data = f'?login={session["user"][0]}&password={session["user"][1]}' \
-                       f'&id={id}&name={name}&department={department}&salary={salary}&birth_date={birth_date}&page=True'
-                return redirect(BASE_URL + 'api/employees/edit' + data)
+                       f'&id={id}&name={urllib.parse.quote(name)}&department={urllib.parse.quote(department)}' \
+                       f'&salary={urllib.parse.quote(salary)}&birth_date={birth_date}&page=True'
+                return redirect('/api/employees/edit' + data)
             return render_template('employees.html', id=id, departments=departments, employees=employees)
         return redirect('/employees')
 
@@ -94,7 +96,7 @@ def delete_emp(id):
     if session.get('user') and session.get('user')[0] == ADMIN:
         data = f'?login={session["user"][0]}&password={session["user"][1]}' \
                f'&id={id}&page=True'
-        return redirect(BASE_URL + 'api/employees/del' + data)
+        return redirect('/api/employees/del' + data)
 
 
 @api_employees.before_request
@@ -104,7 +106,7 @@ def check_session():
       already created. Else redirects to the main page.
       :return: None or redirect
     """
-    if session.get('user') and session.get('user')[0] == ADMIN:
+    if session.get('user'):
         users = User.query.filter_by(login=session.get('user')[0]).all()
         login_user(users[0])
         session.permanent = False

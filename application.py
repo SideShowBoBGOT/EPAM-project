@@ -30,12 +30,10 @@ def create_app():
     login_manager.init_app(app)
     login_manager.login_view = "api.login_page"
     # db.create_all()
-    from views import api
     from views import api_users
     from views import api_login
     from views import api_employees
     from views import api_departments
-    app.register_blueprint(api)
     app.register_blueprint(api_departments)
     app.register_blueprint(api_employees)
     app.register_blueprint(api_login)

@@ -19,7 +19,7 @@ managing database of its users, departments and employees.
 
 
 
-###Structure
+### Structure
 1) migrations - manages database schema changes
 2) models - DB models
 3) service - modules with functions to work with DB (CRUD operations)
@@ -30,27 +30,27 @@ managing database of its users, departments and employees.
 8) tests - modules with unit tests
 9) modules with Web controllers
 ---
-###Authentication
+### Authentication
 Before getting access to contents of database a user must log in(default login: admin password: qwerty)
 . Besides, the user can log out provided that the user entered correct credentials.
 
 ![authentication](./img/authentication.PNG)
 
-###Web app tabs
+### Web app tabs
 
-####Users tab
+#### Users tab
 Here a common user can see its login and
 password. Admin can add, delete users and edit their information.
 
 ![users](./img/users.jpg)
 
-####Departments tab
+#### Departments tab
 Here a common user can see what departments 
 exist and average salary among them. Admin can add, delete departments
 and edit information about them.
 ![departments](./img/departments.PNG)
 
-####Employees tab
+#### Employees tab
 Here a common user can see information about
 employees and find them by birthdate. Admin can add, delete employees
 and edit information about them.
@@ -128,11 +128,11 @@ Or if you run from wsgi.py via IP and Port:
 ---
 
 ## References
-####Install Python
+#### Install Python
 ```html
     https://www.youtube.com/watch?v=bXWlyOMYpRE
 ```
-####Install Gunicorn and Nginx
+#### Install Gunicorn and Nginx
 ```html
     https://www.youtube.com/watch?v=BpcK5jON6Cg&t=796s
 ```

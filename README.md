@@ -67,7 +67,7 @@ and edit information about them.
 - Nginx
 - Bootstrap
 
-[Back To The Top](#read-me-template)
+[Back To The Top](#table-of-contents)
 
 ---
 
@@ -123,7 +123,7 @@ Or if you run from wsgi.py via IP and Port:
 ![nginx](./img/IPandPort.PNG)
 
 
-[Back To The Top](#read-me-template)
+[Back To The Top](#table-of-contents)
 
 ---
 
@@ -132,11 +132,11 @@ Or if you run from wsgi.py via IP and Port:
 ```html
     https://www.youtube.com/watch?v=bXWlyOMYpRE
 ```
-####Install Gunicorn and NginX
+####Install Gunicorn and Nginx
 ```html
     https://www.youtube.com/watch?v=BpcK5jON6Cg&t=796s
 ```
-[Back To The Top](#read-me-template)
+[Back To The Top](#table-of-contents)
 
 ---
 
@@ -164,7 +164,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-[Back To The Top](#read-me-template)
+[Back To The Top](#table-of-contents)
 
 ---
 
@@ -173,4 +173,4 @@ SOFTWARE.
 - Telegram - @sideshowbobgot
 - Email - sideshowbobgot@gmail.com
 
-[Back To The Top](#read-me-template)
+[Back To The Top](#table-of-contents)

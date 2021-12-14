@@ -325,3 +325,4 @@ INFO - - [04/Dec/2021 21:50:11] - - [views_login] "Authorized: login: "admin"	pa
 172.26.160.1 - - [12/Dec/2021 15:15:59] - - INFO - - [views_login] "Authorized: login: "admin"	password: "qwerty""
 172.26.160.1 - - [12/Dec/2021 15:16:06] - - INFO - - [rest_employees] "Found employees: from_date: "2021-12-14"	to_date: "2021-12-29""
 172.26.160.1 - - [12/Dec/2021 15:27:04] - - INFO - - [views_login] "Authorized: login: "admin"	password: "qwerty""
+172.26.160.1 - - [14/Dec/2021 12:15:32] - - INFO - - [views_login] "Authorized: login: "admin"	password: "qwerty""

@@ -17,7 +17,8 @@
 This is the project for EPAM Python [OnlineUA] Autumn course. Project represents web application with authentication and
 managing database of its users, departments and employees.
 
----
+
+
 ###Structure
 1) migrations - manages database schema changes
 2) models - DB models
@@ -30,10 +31,10 @@ managing database of its users, departments and employees.
 9) modules with Web controllers
 ---
 ###Authentication
-Before getting access to contents of database a user must log in.
-<p align="center">
-  <img src="./img/authentication.png" alt="authentication" width="738">
-</p>
+Before getting access to contents of database a user must log in(default login: admin password: qwerty)
+. Besides, the user can log out provided that the user entered correct credentials.
+
+![authentication](./img/authentication.PNG)
 
 ###Web app tabs
 
@@ -41,25 +42,19 @@ Before getting access to contents of database a user must log in.
 Here a common user can see its login and
 password. Admin can add, delete users and edit their information.
 
-<p align="center">
-  <img src="./img/users.png" alt="authentication" width="738">
-</p>
+![users](./img/users.jpg)
 
 ####Departments tab
 Here a common user can see what departments 
 exist and average salary among them. Admin can add, delete departments
 and edit information about them.
-<p align="center">
-  <img src="./img/departments.png" alt="authentication" width="738">
-</p>
+![departments](./img/departments.PNG)
 
 ####Employees tab
 Here a common user can see information about
 employees and find them by birthdate. Admin can add, delete employees
 and edit information about them.
-<p align="center">
-  <img src="./img/employees.png" alt="authentication" width="738">
-</p>
+![employees](./img/employees.PNG)
 
 ---
 
@@ -78,22 +73,69 @@ and edit information about them.
 
 ## How To Use
 
-
-
 ### Installation
-
-
-
-#### API Reference
-
+1) To begin with you need to install python. Here url is how to it:
 ```html
-    dummy code
+    https://www.youtube.com/watch?v=bXWlyOMYpRE
 ```
+After installing python go to the next step.
+2) Having downloaded the project, run command line in project
+folder as ADMIN and enter the next command to install crucial
+packages so that the web app will work correctly. 
+```html
+    python setup.py install
+```
+3) You may want to run the web application with gunicorn and nginx. Therefore,
+here the video is on how to install them:
+```html
+    https://www.youtube.com/watch?v=BpcK5jON6Cg&t=796s
+```
+Providing that you installed both, enter next commands. 
+```html
+    sudo systemctl start nginx
+```
+Check if nginx works correctly:
+```html
+    sudo systemctl status nginx
+```
+![nginx](./img/nginx.PNG)
+```html
+    gunicorn --workers=3 wsgi:app --daemon
+```
+![nginx](./img/gunicorn.PNG)
+--workers=3 stands for working with multiple users and --daemon is used
+to maintain the web app 24/7.
+
+!!!NOTE: check if path of python in the $PATH is the first, so that
+python scripts will work correctly:
+![nginx](./img/PATH.PNG)
+
+4) If you do not use gunicorn and nginx, enter next command:
+```html
+    python wsgi.py
+```
+![nginx](./img/justWSGI.PNG)
+5) If you installed everything correctly, the web app can be accessed via your
+IP( gunicorn and nginx): 
+![nginx](./img/IPgunic.PNG)
+Or if you run from wsgi.py via IP and Port:
+
+![nginx](./img/IPandPort.PNG)
+
+
 [Back To The Top](#read-me-template)
 
 ---
 
 ## References
+####Install Python
+```html
+    https://www.youtube.com/watch?v=bXWlyOMYpRE
+```
+####Install Gunicorn and NginX
+```html
+    https://www.youtube.com/watch?v=BpcK5jON6Cg&t=796s
+```
 [Back To The Top](#read-me-template)
 
 ---

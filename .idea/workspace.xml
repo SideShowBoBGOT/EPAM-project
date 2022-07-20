@@ -2,14 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4632918c-555e-4713-99d9-cd8e6bcd5643" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/README_UK.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/log.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sql/company.db" beforeDir="false" afterPath="$PROJECT_DIR$/sql/company.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/tests/log.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/testing_requests.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/testing_requests.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README_UK.md" beforeDir="false" afterPath="$PROJECT_DIR$/README_UK.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

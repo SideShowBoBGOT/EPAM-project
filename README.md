@@ -1,4 +1,4 @@
-# EPAM-project: Flask app
+# Flask app
 
 ---
 
@@ -14,7 +14,7 @@
 
 ## Description
 
-This is the project for EPAM Python [OnlineUA] Autumn course. Project represents web application with authentication and
+Project represents web application with authentication and
 managing database of its users, departments and employees.
 
 
